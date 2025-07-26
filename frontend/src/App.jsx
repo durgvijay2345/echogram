@@ -32,7 +32,7 @@ import MessageArea from './pages/MessageArea';
 import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 
-export const serverUrl = "http://localhost:8001";
+export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
  
