@@ -14,10 +14,19 @@ dotenv.config();
 
 const port = process.env.PORT;
 
-app.use(cors({
-    origin: "https://echogram-sooty.vercel.app",
-    credentials: true
-}));
+const allowedOrigins = [
+  "https://echogram-sooty.vercel.app", 
+  "http://localhost:5173" 
+];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    
+  })
+);
 
 app.use(express.json());
 app.use(cookieParser());
