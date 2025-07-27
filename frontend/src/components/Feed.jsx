@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from "../assets/logo.png";
+import logo from "../assets/echo1.png";
 import { FaRegHeart } from "react-icons/fa6";
 import StoryDp from './StoryDp';
 import Nav from './Nav';
