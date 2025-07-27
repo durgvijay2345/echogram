@@ -28,7 +28,7 @@ function LoopCard({ loop }) {
     const [showComment, setShowComment] = useState(false);
     const [message, setMessage] = useState("");
 
-    const handleProfileNavigate = (userId) => {
+    const handleProfileNavigate = (userName) => {
         navigate(`/profile/${userName}`);
     };
 
@@ -153,7 +153,7 @@ function LoopCard({ loop }) {
                             <div className='flex justify-start items-center md:gap-[20px] gap-[10px]'>
                                 <div
                                     className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
-                                    onClick={() => handleProfileNavigate(com.author?._id)}
+                                    onClick={() => handleProfileNavigate(com.author?.userName)}
                                 >
                                     <img src={com.author?.profileImage || dp} alt="" className='w-full h-full object-cover' />
                                 </div>
@@ -171,7 +171,7 @@ function LoopCard({ loop }) {
                 <div className='w-full fixed bottom-0 h-[80px] flex items-center justify-between px-[20px] py-[20px]'>
                     <div
                         className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
-                        onClick={() => handleProfileNavigate(loop.author?._id)}
+                        onClick={() => handleProfileNavigate(loop.author?.userName)}
                     >
                         <img src={loop.author?.profileImage || dp} alt="" className='w-full object-cover' />
                     </div>
@@ -214,13 +214,13 @@ function LoopCard({ loop }) {
                 <div className='flex items-center gap-[5px]'>
                     <div
                         className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
-                        onClick={() => handleProfileNavigate(loop.author?._id)}
+                        onClick={() => handleProfileNavigate(loop.author?.userName)}
                     >
                         <img src={loop.author?.profileImage || dp} alt="" className='w-full h-full object-cover' />
                     </div>
                     <div
                         className='w-[120px] font-semibold truncate text-white cursor-pointer'
-                        onClick={() => handleProfileNavigate(loop.author?._id)}
+                        onClick={() => handleProfileNavigate(loop.author?.userName)}
                     >
                         {loop.author.userName}
                     </div>
