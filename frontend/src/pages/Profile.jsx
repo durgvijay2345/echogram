@@ -67,40 +67,43 @@ function Profile() {
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Posts</div>
                 </div>
                 <div>
-                    <div className='flex items-center justify-center gap-[20px]'>
-                        <div className='flex relative'>
-                            {profileData?.followers?.slice(0, 3).map((user, index) => (
+                  <div className='flex items-center justify-center gap-[20px]'>
+    <div className='flex relative min-w-[150px]'>
+        {profileData?.followers?.slice(0, 3).map((user, index) => (
+            <div
+                key={user._id}
+                className='w-[40px] h-[40px] border-2 border-black rounded-full overflow-hidden absolute'
+                style={{ left: `${index * 24}px`, zIndex: 10 - index }}
+            >
+                <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover object-center' />
+            </div>
+        ))}
+    </div>
+    <div className='text-[22px] md:text-[30px] font-semibold'>
+        {profileData?.followers.length}
+    </div>
+</div>
 
-                                <div className={w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?absolute left-[${index*10}px]:""}}>
-                                    <img src={user.profileImage || dp} alt="" className='w-full object-cover' />
-                                </div>
-                            ))}
-
-
-                        </div>
-                        <div className='text-white text-[22px] md:text-[30px] font-semibold'>
-                            {profileData?.followers.length}
-                        </div>
-                    </div>
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Followers</div>
                 </div>
                 <div>
-                    <div className='flex items-center justify-center gap-[20px]'>
-                        <div className='flex relative'>
+                   <div className='flex items-center justify-center gap-[20px]'>
+    <div className='flex relative min-w-[150px]'>
+        {profileData?.following?.slice(0, 3).map((user, index) => (
+            <div
+                key={user._id}
+                className='w-[40px] h-[40px] border-2 border-black rounded-full overflow-hidden absolute'
+                style={{ left: `${index * 24}px`, zIndex: 10 - index }}
+            >
+                <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover object-center' />
+            </div>
+        ))}
+    </div>
+    <div className='text-[22px] md:text-[30px] font-semibold'>
+        {profileData?.following.length}
+    </div>
+</div>
 
-                             {profileData?.following?.slice(0, 3).map((user, index) => (
-                               
-
-                                <div className={w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?absolute left-[${index*10}px]:""}}>
-                                    <img src={user?.profileImage || dp} alt="" className='w-full object-cover' />
-                                </div>
-                            ))}
-
-                        </div>
-                        <div className='text-white text-[22px] md:text-[30px] font-semibold'>
-                            {profileData?.following.length}
-                        </div>
-                    </div>
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Following</div>
                 </div>
             </div>
