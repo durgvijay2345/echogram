@@ -2,7 +2,7 @@ import React from 'react';
 
 function ExitModal({ onExit, onStay }) {
   return (
-    <div className='fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50'>
+    <div className='fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-[9999]'>
       <div className='bg-white rounded-2xl p-6 w-[300px] flex flex-col items-center text-center'>
         <h2 className='text-xl font-semibold mb-4'>Exit Site?</h2>
         <p className='text-gray-600 mb-6'>Are you sure you want to exit this website?</p>
@@ -26,4 +26,5 @@ function ExitModal({ onExit, onStay }) {
 }
 
 export default ExitModal;
+
 
