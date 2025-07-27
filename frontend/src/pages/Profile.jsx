@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setProfileData, setUserData } from '../redux/userSlice'
 import { useEffect } from 'react'
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import dp from "../assets/dp.webp"
+import dp from "../assets/dp.jpg"
 import Nav from '../components/Nav'
 import FollowButton from '../components/FollowButton'
 import Post from '../components/Post'
@@ -23,7 +23,7 @@ function Profile() {
     const { postData } = useSelector(state => state.post)
     const handleProfile = async () => {
         try {
-            const result = await axios.get(${serverUrl}/api/user/getProfile/${userName}, { withCredentials: true })
+            const result = await axios.get(`${serverUrl}/api/user/getProfile/${userName}`, { withCredentials: true })
             dispatch(setProfileData(result.data))
         } catch (error) {
             console.log(error)
@@ -31,7 +31,7 @@ function Profile() {
     }
     const handleLogOut = async () => {
         try {
-            const result = await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true })
+            const result = await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true })
             dispatch(setUserData(null))
         } catch (error) {
             console.log(error)
@@ -67,43 +67,40 @@ function Profile() {
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Posts</div>
                 </div>
                 <div>
-                  <div className='flex items-center justify-center gap-[20px]'>
-    <div className='flex relative min-w-[150px]'>
-        {profileData?.followers?.slice(0, 3).map((user, index) => (
-            <div
-                key={user._id}
-                className='w-[40px] h-[40px] border-2 border-black rounded-full overflow-hidden absolute'
-                style={{ left: `${index * 24}px`, zIndex: 10 - index }}
-            >
-                <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover object-center' />
-            </div>
-        ))}
-    </div>
-    <div className='text-[22px] md:text-[30px] font-semibold'>
-        {profileData?.followers.length}
-    </div>
-</div>
+                    <div className='flex items-center justify-center gap-[20px]'>
+                        <div className='flex relative'>
+                            {profileData?.followers?.slice(0, 3).map((user, index) => (
 
+                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*10}px]`:""}`}>
+                                    <img src={user.profileImage || dp} alt="" className='w-full object-cover' />
+                                </div>
+                            ))}
+
+
+                        </div>
+                        <div className='text-white text-[22px] md:text-[30px] font-semibold'>
+                            {profileData?.followers.length}
+                        </div>
+                    </div>
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Followers</div>
                 </div>
                 <div>
-                   <div className='flex items-center justify-center gap-[20px]'>
-    <div className='flex relative min-w-[150px]'>
-        {profileData?.following?.slice(0, 3).map((user, index) => (
-            <div
-                key={user._id}
-                className='w-[40px] h-[40px] border-2 border-black rounded-full overflow-hidden absolute'
-                style={{ left: `${index * 24}px`, zIndex: 10 - index }}
-            >
-                <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover object-center' />
-            </div>
-        ))}
-    </div>
-    <div className='text-[22px] md:text-[30px] font-semibold'>
-        {profileData?.following.length}
-    </div>
-</div>
+                    <div className='flex items-center justify-center gap-[20px]'>
+                        <div className='flex relative'>
 
+                             {profileData?.following?.slice(0, 3).map((user, index) => (
+                               
+
+                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*10}px]`:""}`}>
+                                    <img src={user?.profileImage || dp} alt="" className='w-full object-cover' />
+                                </div>
+                            ))}
+
+                        </div>
+                        <div className='text-white text-[22px] md:text-[30px] font-semibold'>
+                            {profileData?.following.length}
+                        </div>
+                    </div>
                     <div className='text-[18px] md:text-[22px] text-[#ffffffc7]'>Following</div>
                 </div>
             </div>
@@ -130,9 +127,9 @@ function Profile() {
                 <div className='w-full max-w-[900px] flex flex-col items-center rounded-t-[30px] bg-white relative gap-[20px] pt-[30px] pb-[100px]'>
                     {profileData?._id==userData._id && <div className='w-[90%] max-w-[500px] h-[80px] bg-[white] rounded-full flex justify-center items-center gap-[10px]' >
 
-                <div className={${postType == "posts" ? "bg-black text-white shadow-2xl shadow-black" : ""}  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black} onClick={() => setPostType("posts")}>Posts</div>
+                <div className={`${postType == "posts" ? "bg-black text-white shadow-2xl shadow-black" : ""}  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black`} onClick={() => setPostType("posts")}>Posts</div>
 
-                <div className={${postType == "saved" ? "bg-black text-white shadow-2xl shadow-black" : ""}  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black} onClick={() => setPostType("saved")}>Saved</div>
+                <div className={`${postType == "saved" ? "bg-black text-white shadow-2xl shadow-black" : ""}  w-[28%] h-[80%] flex justify-center items-center text-[19px] font-semibold hover:bg-black rounded-full hover:text-white cursor-pointer hover:shadow-2xl hover:shadow-black`} onClick={() => setPostType("saved")}>Saved</div>
 
              </div>}
 
@@ -161,6 +158,7 @@ function Profile() {
     )
 }
 
-export default Profile 
+export default Profile
+
 
 
