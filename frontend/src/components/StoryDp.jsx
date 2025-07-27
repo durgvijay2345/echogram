@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import dp from "../assets/dp.jpg"
+import dp from "../assets/dp.webp"
 import { FiPlusCircle } from "react-icons/fi";
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
