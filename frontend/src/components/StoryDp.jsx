@@ -45,17 +45,22 @@ navigate(`/story/${userName}`)
 }
   return (
     <div className='flex flex-col w-[80px]'>
-      <div className={`w-[80px] h-[80px] ${!story?null:!viewed?"bg-gradient-to-b  from-blue-500 to-blue-950":"bg-gradient-to-r from-gray-500 to-black-800"}  rounded-full flex items-center justify-center relative`}  onClick={handleClick}>
-      <div className='w-[70px] h-[70px] border-2 border-black rounded-full cursor-pointer overflow-hidden '>
-          <img src={ProfileImage ||  dp} alt="" className='w-full object-cover'/>
-          {!story && userName=="Your Story" && <div>
-       <FiPlusCircle className='text-black absolute bottom-[8px] bg-white  right-[10px] rounded-full w-[22px] h-[22px]' />
-            </div>}
-               
-      </div>
-      </div>
-      <div className='text-[14px] text-center truncate w-full text-white'>{userName}</div>
+     <div className='flex flex-col w-[80px] items-center'>
+  <div
+    className={`w-[80px] h-[80px] ${!story ? '' : !viewed ? "bg-gradient-to-b from-blue-500 to-blue-950" : "bg-gradient-to-r from-gray-500 to-black-800"} rounded-full flex items-center justify-center relative`}
+    onClick={handleClick}
+  >
+    <div className='w-[70px] h-[70px] border-2 border-black rounded-full overflow-hidden relative'>
+      <img src={ProfileImage || dp} alt="" className='w-full h-full object-cover aspect-square' />
+      
+      {!story && userName === "Your Story" && (
+        <FiPlusCircle className='absolute bottom-0 right-0 w-[22px] h-[22px] text-white bg-black rounded-full p-[2px]' />
+      )}
     </div>
+  </div>
+  <div className='text-[14px] text-center truncate w-full text-white mt-[5px]'>{userName}</div>
+</div>
+
   )
 }
 
