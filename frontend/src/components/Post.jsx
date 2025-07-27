@@ -19,6 +19,7 @@ function Post({ post }) {
   const { socket } = useSelector(state => state.socket);
 
   const [showComment, setShowComment] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(2);
   const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
@@ -75,90 +76,130 @@ function Post({ post }) {
 
   const author = post.author;
 
+  
+  const visibleComments = post.comments.slice(0, visibleCount);
+
+  const handleShowMore = () => {
+    setVisibleCount(prev => prev + 2); 
+  };
+
+  const handleHideComments = () => {
+    setVisibleCount(2);
+    setShowComment(false);
+  };
+
   return (
-    <div className='w-full max-w-[500px] flex flex-col bg-white shadow-md rounded-none border border-gray-300'>
-      
-      {/* Post Header */}
-      <div className='w-full flex items-center justify-between px-3 py-2'>
+    <div className='w-full flex flex-col items-center'>
+      {/* Top Section: Profile & Follow */}
+      <div className='w-full max-w-[600px] flex justify-between items-center px-4 py-3'>
         <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate(`/profile/${author?.userName}`)}>
-          <img src={author?.profileImage || dp} alt="" className='w-10 h-10 rounded-full border object-cover' />
-          <div className='font-semibold text-[14px]'>{author?.userName || "Unknown"}</div>
+          <div className='w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border'>
+            <img src={author?.profileImage || dp} alt="" className='w-full h-full object-cover' />
+          </div>
+          <span className='font-semibold text-sm md:text-base'>{author?.userName || "Unknown"}</span>
         </div>
         {userData._id !== author?._id &&
           <FollowButton
-            tailwind={'px-3 py-1 text-[12px] bg-black text-white rounded-full whitespace-nowrap'}
+            tailwind='px-3 py-1 bg-black text-white text-sm md:text-base rounded-full'
             targetUserId={author?._id}
-          />
-        }
+          />}
       </div>
 
-      {/* Post Media */}
-      <div className='w-full'>
+      {/* Media Section */}
+      <div className='w-full flex justify-center'>
         {post.mediaType === "image" && (
-          <img src={post.media} alt="" className='w-full object-cover' />
+          <img src={post.media} alt="" className='w-full max-w-[600px] object-cover' />
         )}
         {post.mediaType === "video" && (
-          <VideoPlayer media={post.media} />
+          <div className='w-full max-w-[600px]'>
+            <VideoPlayer media={post.media} />
+          </div>
         )}
       </div>
 
-      {/* Post Actions */}
-      <div className='w-full flex justify-between items-center px-3 py-2'>
-        <div className='flex gap-4 items-center'>
+      {/* Actions Section */}
+      <div className='w-full max-w-[600px] flex justify-between items-center px-4 py-3'>
+        <div className='flex items-center gap-4'>
           {!post.likes.includes(userData._id)
             ? <GoHeart className='w-6 h-6 cursor-pointer' onClick={handleLike} />
             : <GoHeartFill className='w-6 h-6 text-red-600 cursor-pointer' onClick={handleLike} />}
           <MdOutlineComment className='w-6 h-6 cursor-pointer' onClick={() => setShowComment(prev => !prev)} />
         </div>
-        <div onClick={handleSaved}>
+        <div>
           {!userData.saved.includes(post._id)
-            ? <MdOutlineBookmarkBorder className='w-6 h-6 cursor-pointer' />
-            : <GoBookmarkFill className='w-6 h-6 cursor-pointer' />}
+            ? <MdOutlineBookmarkBorder className='w-6 h-6 cursor-pointer' onClick={handleSaved} />
+            : <GoBookmarkFill className='w-6 h-6 cursor-pointer' onClick={handleSaved} />}
         </div>
       </div>
 
-      {/* Like Count */}
-      <div className='w-full px-3 text-[14px] font-semibold'>
-        {post.likes.length} likes
+      {/* Likes Count */}
+      <div className='w-full max-w-[600px] px-4'>
+        <span className='font-semibold text-sm'>{post.likes.length} likes</span>
       </div>
 
       {/* Caption */}
       {post.caption && (
-        <div className='w-full px-3 py-1 text-[14px]'>
-          <span className='font-semibold mr-1'>{author?.userName || "Unknown"}</span>
-          {post.caption}
+        <div className='w-full max-w-[600px] px-4 py-2 text-sm'>
+          <span className='font-semibold mr-2'>{author?.userName}</span>
+          <span>{post.caption}</span>
+        </div>
+      )}
+
+      {/* View All Comments Button */}
+      {post.comments.length > 2 && !showComment && (
+        <div className='w-full max-w-[600px] px-4 text-sm text-gray-500 cursor-pointer' onClick={() => setShowComment(true)}>
+          View all {post.comments.length} comments
         </div>
       )}
 
       {/* Comments Section */}
       {showComment && (
-        <div className='w-full flex flex-col gap-2 px-3 py-2'>
-          {post.comments?.map((com, index) => (
-            <div key={index} className='flex items-center gap-3'>
-              <img src={com.author?.profileImage || dp} alt="" className='w-8 h-8 rounded-full object-cover' />
-              <div className='text-[14px]'>
-                <span className='font-semibold mr-1'>{com.author?.userName || "User"}</span>
-                {com.message}
+        <div className='w-full max-w-[600px] px-4'>
+          {visibleComments.map((com, index) => (
+            <div key={index} className='flex items-center gap-3 py-2'>
+              <div className='w-8 h-8 rounded-full overflow-hidden border'>
+                <img src={com.author?.profileImage || dp} alt="" className='w-full h-full object-cover' />
+              </div>
+              <div>
+                <span className='font-semibold text-sm mr-2'>{com.author?.userName}</span>
+                <span className='text-sm'>{com.message}</span>
               </div>
             </div>
           ))}
 
-          <div className='w-full flex items-center gap-3 pt-2 border-t border-gray-200'>
-            <img src={userData?.profileImage || dp} alt="" className='w-8 h-8 rounded-full object-cover' />
-            <input
-              type="text"
-              placeholder="Add a comment..."
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              className='flex-1 outline-none text-[14px]'
-            />
-            <IoSendSharp className='w-5 h-5 cursor-pointer' onClick={handleComment} />
-          </div>
+          {visibleCount < post.comments.length && (
+            <div className='text-sm text-blue-500 cursor-pointer mb-2' onClick={handleShowMore}>
+              View more comments
+            </div>
+          )}
+
+          {visibleCount >= post.comments.length && post.comments.length > 2 && (
+            <div className='text-sm text-blue-500 cursor-pointer mb-2' onClick={handleHideComments}>
+              Hide comments
+            </div>
+          )}
         </div>
       )}
 
+      {/* Add Comment */}
+      {showComment && (
+        <div className='w-full max-w-[600px] flex items-center px-4 py-3 border-t'>
+          <div className='w-10 h-10 rounded-full overflow-hidden border'>
+            <img src={userData?.profileImage || dp} alt="" className='w-full h-full object-cover' />
+          </div>
+          <input
+            type="text"
+            placeholder="Add a comment..."
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            className='flex-1 mx-3 border-b outline-none py-1 text-sm'
+          />
+          <IoSendSharp onClick={handleComment} className='w-5 h-5 cursor-pointer' />
+        </div>
+      )}
     </div>
   );
 }
 
 export default Post;
+
