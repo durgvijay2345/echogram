@@ -29,7 +29,7 @@ function LoopCard({ loop }) {
     const [message, setMessage] = useState("");
 
     const handleProfileNavigate = (userId) => {
-        navigate(`/profile/${userId}`);
+        navigate(`/profile/${userName}`);
     };
 
     const handleTimeUpdate = () => {
@@ -159,7 +159,7 @@ function LoopCard({ loop }) {
                                 </div>
                                 <div
                                     className='w-[150px] font-semibold text-white truncate cursor-pointer'
-                                    onClick={() => handleProfileNavigate(com.author?._id)}
+                                    onClick={() => handleProfileNavigate(com.author?.userName)}
                                 >
                                     {com.author?.userName}
                                 </div>
