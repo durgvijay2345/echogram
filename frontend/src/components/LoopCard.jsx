@@ -171,9 +171,9 @@ function LoopCard({ loop }) {
                 <div className='w-full fixed bottom-0 h-[80px] flex items-center justify-between px-[20px] py-[20px]'>
                     <div
                         className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
-                        onClick={() => handleProfileNavigate(loop.author?.userName)}
+                        onClick={() => handleProfileNavigate(com.author?.userName)}
                     >
-                        <img src={loop.author?.profileImage || dp} alt="" className='w-full object-cover' />
+                        <img src={com.author?.profileImage || dp} alt="" className='w-full object-cover' />
                     </div>
                     <input
                         type="text"
