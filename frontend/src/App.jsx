@@ -31,6 +31,7 @@ import Messages from './pages/Messages';
 import MessageArea from './pages/MessageArea';
 import Search from './pages/Search';
 import Notifications from './pages/Notifications';
+import Goodbye from './pages/Goodbye';
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
@@ -88,6 +89,7 @@ socket?.on("newNotification",(noti)=>{
       <Route path='/signup' element={!userData ? <SignUp /> : <Navigate to='/' />} />
       <Route path='/signin' element={!userData ? <SignIn /> : <Navigate to='/' />} />
       <Route path='/' element={userData ? <Home /> : <Navigate to='/signin' />} />
+     <Route path="/goodbye" element={<Goodbye />} />
       <Route path='/forgot-password' element={!userData ? <ForgotPassword /> : <Navigate to='/' />} />
       <Route path='/profile/:userName' element={userData ? <Profile /> : <Navigate to='/' />} />
       <Route path='/story/:userName' element={userData ? <Story /> : <Navigate to='/' />} />
