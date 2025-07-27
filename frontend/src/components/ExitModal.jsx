@@ -26,3 +26,4 @@ function ExitModal({ onExit, onStay }) {
 }
 
 export default ExitModal;
+
