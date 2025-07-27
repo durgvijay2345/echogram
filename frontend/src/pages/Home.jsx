@@ -1,22 +1,21 @@
-imimport React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import LeftHome from '../components/LeftHome';
 import Feed from '../components/Feed';
 import RightHome from '../components/RightHome';
+import ExitModal from '../components/ExitModal';
 
 function Home() {
+  const [showExitModal, setShowExitModal] = useState(false);
+
   useEffect(() => {
     const handlePopState = (event) => {
+      setShowExitModal(true);
       
-      const shouldExit = window.confirm("Do you want to exit the site?");
-      if (shouldExit) {
-      
-      } else {
-       
-        window.history.pushState(null, null, window.location.pathname);
-      }
+      window.history.pushState(null, null, window.location.pathname);
     };
 
-    window.history.pushState(null, null, window.location.pathname); // Push initial state
+ 
+    window.history.pushState(null, null, window.location.pathname);
     window.addEventListener('popstate', handlePopState);
 
     return () => {
@@ -24,13 +23,25 @@ function Home() {
     };
   }, []);
 
+  const handleExit = () => {
+   
+    window.history.back();
+  };
+
+  const handleStay = () => {
+    setShowExitModal(false);
+  };
+
   return (
     <div className='w-full flex justify-center items-center'>
       <LeftHome />
       <Feed />
       <RightHome />
+
+      {showExitModal && <ExitModal onExit={handleExit} onStay={handleStay} />}
     </div>
   );
 }
 
 export default Home;
+
