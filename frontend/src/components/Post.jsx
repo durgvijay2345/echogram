@@ -90,7 +90,7 @@ function Post({ post }) {
 
   return (
     <div className='w-full flex flex-col items-center'>
-      {/* Top Section: Profile & Follow */}
+      
       <div className='w-full max-w-[600px] flex justify-between items-center px-4 py-3'>
         <div className='flex items-center gap-3 cursor-pointer' onClick={() => navigate(`/profile/${author?.userName}`)}>
           <div className='w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden border'>
@@ -100,12 +100,12 @@ function Post({ post }) {
         </div>
         {userData._id !== author?._id &&
           <FollowButton
-            tailwind='px-3 py-1 bg-black text-white text-sm md:text-base rounded-full'
+            tailwind='px-3 py-1 bg-black text-white text-sm md:text-base rounded-full cursor-pointer'
             targetUserId={author?._id}
           />}
       </div>
 
-      {/* Media Section */}
+     
       <div className='w-full flex justify-center'>
         {post.mediaType === "image" && (
           <img src={post.media} alt="" className='w-full max-w-[600px] object-cover' />
@@ -117,7 +117,7 @@ function Post({ post }) {
         )}
       </div>
 
-      {/* Actions Section */}
+      
       <div className='w-full max-w-[600px] flex justify-between items-center px-4 py-3'>
         <div className='flex items-center gap-4'>
           {!post.likes.includes(userData._id)
@@ -132,12 +132,12 @@ function Post({ post }) {
         </div>
       </div>
 
-      {/* Likes Count */}
+ 
       <div className='w-full max-w-[600px] px-4'>
         <span className='font-semibold text-sm'>{post.likes.length} likes</span>
       </div>
 
-      {/* Caption */}
+    
       {post.caption && (
         <div className='w-full max-w-[600px] px-4 py-2 text-sm'>
           <span className='font-semibold mr-2'>{author?.userName}</span>
@@ -145,14 +145,14 @@ function Post({ post }) {
         </div>
       )}
 
-      {/* View All Comments Button */}
+    
       {post.comments.length > 2 && !showComment && (
         <div className='w-full max-w-[600px] px-4 text-sm text-gray-500 cursor-pointer' onClick={() => setShowComment(true)}>
           View all {post.comments.length} comments
         </div>
       )}
 
-      {/* Comments Section */}
+    
       {showComment && (
         <div className='w-full max-w-[600px] px-4'>
           {visibleComments.map((com, index) => (
@@ -181,7 +181,7 @@ function Post({ post }) {
         </div>
       )}
 
-      {/* Add Comment */}
+   
       {showComment && (
         <div className='w-full max-w-[600px] flex items-center px-4 py-3 border-t'>
           <div className='w-10 h-10 rounded-full overflow-hidden border'>
