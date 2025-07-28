@@ -49,7 +49,7 @@ function StoryDp({ ProfileImage, userName, story }) {
                 onClick={handleClick}
             >
                 <div className='w-[70px] h-[70px] bg-black rounded-full overflow-hidden'>
-                    <img src={ProfileImage || dp} alt="" className='w-full h-full object-cover object-center' />
+                    <img src={ProfileImage || dp} alt="" className='w-full h-full object-cover object-center cursor-pointer' />
                 </div>
 
                 
