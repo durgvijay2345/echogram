@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch,useSelector} from 'react-redux';
 import { setFollowing, setUserData } from '../redux/userSlice';
 import { setCurrentUserStory } from '../redux/storySlice';
 import { serverUrl } from '../App';
