@@ -3,7 +3,7 @@ import favinsta from '../public/favInsta.png';
 
 function SplashScreen() {
   return (
-    <div className="w-full h-screen flex flex-col items-center justify-center bg-black text-orange-400">
+    <div className="w-full h-screen flex flex-col items-center justify-center bg-white">
       <img
         src={favinsta}
         alt="Echogram"
