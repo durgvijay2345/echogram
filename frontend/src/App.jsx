@@ -3,7 +3,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
-import SplashScreen from './components/SplashScreen';
+
 
 import { setOnlineUsers, setSocket } from './redux/socketSlice';
 import { setNotificationData } from './redux/userSlice';
@@ -33,7 +33,7 @@ import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 import Goodbye from './pages/Goodbye';
 
-import ClipLoader from "react-spinners/ClipLoader";  // For loader spinner
+import ClipLoader from "react-spinners/ClipLoader";  
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
@@ -82,9 +82,14 @@ function App() {
   });
 
   
- if (loading) {
-    return <SplashScreen />;  
+if (loading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center bg-black">
+        <ClipLoader color="#fff" size={50} />
+      </div>
+    );
   }
+
 
   return (
     <Routes>
