@@ -50,3 +50,11 @@
 .paused {
   animation-play-state: paused;
 }
+@keyframes spinSlow {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.spin-slow {
+  animation: spinSlow 2s linear infinite;
+}
