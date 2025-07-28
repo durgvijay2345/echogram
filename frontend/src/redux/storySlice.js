@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 const storySlice=createSlice({
-    name:"post",
+    name:"story",
     initialState:{
         storyData:[],
         storyList:[],
