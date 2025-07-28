@@ -1,13 +1,12 @@
-import React, { useEffect } from 'react';
+// App.jsx
+import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
+import { io } from "socket.io-client";
 
-import { setOnlineUsers, setSocket } from './redux/socketSlice'
+import { setOnlineUsers, setSocket } from './redux/socketSlice';
 import { setNotificationData } from './redux/userSlice';
 
-import {io} from "socket.io-client"
-
-// Import Hooks
 import useGetCurrentUser from './hooks/useGetCurrentUser';
 import useGetAllPost from './hooks/useGetAllPost';
 import useGetAllLoops from './hooks/useGetAllLoops';
@@ -33,11 +32,13 @@ import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 import Goodbye from './pages/Goodbye';
 
+import ClipLoader from "react-spinners/ClipLoader";  // For loader spinner
+
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
- 
-  // Custom Hooks (Call here inside component)
+
+  // Custom Hooks
   useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
@@ -47,49 +48,53 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  // Socket Connection + Listeners
-  
-  const {userData,notificationData}=useSelector(state=>state.user)
-   
-    const {socket}=useSelector(state=>state.socket)
-    const dispatch=useDispatch()
- useEffect(()=>{
-  if(userData){
-    const socketIo=io(`${serverUrl}`,{
-      query:{
-        userId:userData._id
+  const { userData, notificationData, loading } = useSelector(state => state.user);
+  const { socket } = useSelector(state => state.socket);
+  const dispatch = useDispatch();
+
+  // Socket Setup
+  React.useEffect(() => {
+    if (userData) {
+      const socketIo = io(`${serverUrl}`, {
+        query: {
+          userId: userData._id
+        }
+      });
+      dispatch(setSocket(socketIo));
+
+      socketIo.on('getOnlineUsers', (users) => {
+        dispatch(setOnlineUsers(users));
+        console.log(users);
+      });
+
+      return () => socketIo.close();
+    } else {
+      if (socket) {
+        socket.close();
+        dispatch(setSocket(null));
       }
-    })
-dispatch(setSocket(socketIo))
-
-
-socketIo.on('getOnlineUsers',(users)=>{
-  dispatch(setOnlineUsers(users))
-  console.log(users)
-})
-
-
-return ()=>socketIo.close()
-  }else{
-    if(socket){
-      socket.close()
-      dispatch(setSocket(null))
     }
+  }, [userData]);
+
+  socket?.on("newNotification", (noti) => {
+    dispatch(setNotificationData([...notificationData, noti]));
+  });
+
+  
+  if (loading) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center bg-black">
+        <ClipLoader color="#fff" size={50} />
+      </div>
+    );
   }
- },[userData])
-
-
-socket?.on("newNotification",(noti)=>{
-  dispatch(setNotificationData([...notificationData,noti]))
-})
-
 
   return (
     <Routes>
       <Route path='/signup' element={!userData ? <SignUp /> : <Navigate to='/' />} />
       <Route path='/signin' element={!userData ? <SignIn /> : <Navigate to='/' />} />
       <Route path='/' element={userData ? <Home /> : <Navigate to='/signin' />} />
-     <Route path="/goodbye" element={<Goodbye />} />
+      <Route path="/goodbye" element={<Goodbye />} />
       <Route path='/forgot-password' element={!userData ? <ForgotPassword /> : <Navigate to='/' />} />
       <Route path='/profile/:userName' element={userData ? <Profile /> : <Navigate to='/' />} />
       <Route path='/story/:userName' element={userData ? <Story /> : <Navigate to='/' />} />
@@ -105,3 +110,4 @@ socket?.on("newNotification",(noti)=>{
 }
 
 export default App;
+
