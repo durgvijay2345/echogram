@@ -7,7 +7,7 @@ import { serverUrl } from '../App';
 
 function useGetCurrentUser() {
   const dispatch = useDispatch();
-  const { storyData } = useSelector(state => state.story);
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -21,7 +21,7 @@ function useGetCurrentUser() {
       }
     };
     fetchUser();
-  }, [storyData, dispatch]);
+  }, [dispatch]);
 }
 
 export default useGetCurrentUser;
