@@ -50,12 +50,22 @@ function LeftHome() {
 
       <div className='w-full flex flex-col gap-[20px] p-[20px]'>
         <h1 className='text-[white] text-[19px]'>Suggested Users</h1>
-        {suggestedUsers && suggestedUsers.slice(0, 3).map((user, index) => (
-          <OtherUser key={index} user={user} />
-        ))}
+        {suggestedUsers && suggestedUsers.length > 0 ? (
+          suggestedUsers.slice(0, 3).map((user, index) => (
+            <OtherUser key={index} user={user} />
+          ))
+        ) : (
+          // Skeleton Loaders
+          <>
+            {[1, 2, 3].map((item) => (
+              <div key={item} className='w-full h-[70px] bg-gray-800 rounded-xl animate-pulse'></div>
+            ))}
+          </>
+        )}
       </div>
     </div>
   );
 }
 
 export default LeftHome;
+
