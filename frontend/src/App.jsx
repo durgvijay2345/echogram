@@ -3,6 +3,7 @@ import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
+import SplashScreen from './components/SplashScreen';
 
 import { setOnlineUsers, setSocket } from './redux/socketSlice';
 import { setNotificationData } from './redux/userSlice';
@@ -81,12 +82,8 @@ function App() {
   });
 
   
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center bg-black">
-        <ClipLoader color="#fff" size={50} />
-      </div>
-    );
+ if (loading) {
+    return <SplashScreen />;  
   }
 
   return (
