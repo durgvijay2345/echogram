@@ -1,46 +1,53 @@
 @import "tailwindcss";
+
 ::-webkit-scrollbar {
   display: none;
 }
 
-
- *{
-  scrollbar-width: none; 
-  -ms-overflow-style: none;  
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: #d1d5db; 
+  background-color: #d1d5db;
   border-radius: 9999px;
 }
+
 .custom-scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
 }
- @keyframes heartPop{
-  0%{
+
+@keyframes heartPop {
+  0% {
     transform: scale(0.5);
     opacity: 0.5;
   }
-   50%{
+  50% {
     transform: scale(1.3);
     opacity: 1;
   }
-   100%{
+  100% {
     transform: scale(1);
     opacity: 0;
   }
- }
- .heart-animation{
-  animation: heartPop 1s ease-out forwards;
- }
+}
 
- @keyframes progressBar {
-  from { width: 0%; }
-  to { width: 100%; }
+.heart-animation {
+  animation: heartPop 1s ease-out forwards;
+}
+
+@keyframes progressBar {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
 }
 
 .playing {
@@ -50,11 +57,36 @@
 .paused {
   animation-play-state: paused;
 }
+
 @keyframes spinSlow {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .spin-slow {
   animation: spinSlow 2s linear infinite;
 }
+
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.shimmer-text {
+  background: linear-gradient(90deg, #666, #fff, #666);
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer 2s linear infinite;
+}
+
