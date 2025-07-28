@@ -20,7 +20,7 @@ function useGetCurrentUser() {
       }
     };
     fetchUser();
-  }, [dispatch]);  
+  }, [dispatch,storyData]);  
 }
 
 export default useGetCurrentUser;
