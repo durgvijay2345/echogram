@@ -33,17 +33,17 @@ function Profile() {
     useEffect(() => {
         handleProfile()
     }, [userName, dispatch])
-   const handleLogOut = async () => {
+ const handleLogOut = async () => {
   try {
     await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
     dispatch(setUserData(null));
     navigate('/signin');
-    window.location.reload(); // Force re-run hooks like useGetCurrentUser
+    window.location.reload();
   } catch (error) {
     console.log(error);
   }
 };
-  };
+
     return (
         <div className='w-full min-h-screen bg-black'>
             <div className='w-full h-[80px] flex justify-between items-center px-[30px] text-white'>
