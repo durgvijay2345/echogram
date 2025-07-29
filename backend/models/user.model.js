@@ -69,7 +69,10 @@ const userSchema=new mongoose.Schema({
     isOtpVerified:{
         type:Boolean,
         default:false
-    }  
+    }, tokenVersion: {
+        type: Number,
+        default: 0
+    },
 },{timestamps:true})
 
 const User=mongoose.model("User",userSchema)
