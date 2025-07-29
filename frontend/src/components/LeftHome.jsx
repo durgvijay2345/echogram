@@ -14,15 +14,17 @@ function LeftHome() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-   const handleLogOut = async () => {
+  const handleLogOut = async () => {
     try {
-      await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
-      dispatch(setUserData(null));
-        
+        await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
+        dispatch(setUserData(null));
+        navigate('/signin');
+        window.location.reload();  // Make sure to reload and clear everything from memory
     } catch (error) {
-      console.log(error);
+        console.log(error);
     }
-  };
+};
+
 
   return (
     <div className='w-[25%] hidden lg:block h-[100vh] bg-[black] border-r-2 border-gray-900 overflow-auto'>
