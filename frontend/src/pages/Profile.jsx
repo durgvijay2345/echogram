@@ -29,18 +29,18 @@ function Profile() {
             console.log(error)
         }
     }
-    const handleLogOut = async () => {
-        try {
-            const result = await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true })
-            dispatch(setUserData(null))
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
+   
     useEffect(() => {
         handleProfile()
     }, [userName, dispatch])
+     const handleLogOut = async () => {
+    try {
+      await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
+      dispatch(setUserData(null));
+    } catch (error) {
+      console.log(error);
+    }
+  };
     return (
         <div className='w-full min-h-screen bg-black'>
             <div className='w-full h-[80px] flex justify-between items-center px-[30px] text-white'>
