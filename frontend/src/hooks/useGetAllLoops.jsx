@@ -1,26 +1,25 @@
-import axios from 'axios'
-import React, { useEffect } from 'react'
-import { serverUrl } from '../App'
-import { useDispatch, useSelector } from 'react-redux'
-import { setUserData } from '../redux/userSlice'
-import { setPostData } from '../redux/postSlice'
-import { setLoopData } from '../redux/loopSlice'
+import axios from 'axios';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { setLoopData } from '../redux/loopSlice';
+import { serverUrl } from '../App';
 
 function useGetAllLoops() {
-    const dispatch=useDispatch()
-    const {userData}=useSelector(state=>state.user)
-   
-  useEffect(()=>{
-const fetchloops=async ()=>{
-    try {
-        const result=await axios.get(`${serverUrl}/api/loop/getAll`,{withCredentials:true})
-         dispatch(setLoopData(result.data))
-    } catch (error) {
-        console.log(error)
-    }
-}
-fetchloops()
-  },[dispatch,userData])
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        const fetchLoops = async () => {
+            try {
+                const result = await axios.get(`${serverUrl}/api/loop/getAll`, { withCredentials: true });
+                dispatch(setLoopData(result.data));
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        fetchLoops();  // Run once on component mount
+    }, []);
 }
 
-export default useGetAllLoops
+export default useGetAllLoops;
+
