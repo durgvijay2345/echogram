@@ -25,7 +25,7 @@ function Profile() {
       const handleLogOut = async () => {
     try {
       await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true });
-      dispatch(setUserData(null));
+      dispatch(setProfileData(null));
     } catch (error) {
       console.log(error);
     }
