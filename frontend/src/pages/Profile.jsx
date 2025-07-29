@@ -35,6 +35,8 @@ function Profile() {
         try {
             const result = await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true })
             dispatch(setUserData(null))
+              navigate('/signin');
+             window.location.reload();
         } catch (error) {
             console.log(error)
         }
