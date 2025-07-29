@@ -1,24 +1,35 @@
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import useGetAllPost from './useGetAllPost';
-import useGetAllStories from './useGetAllStories';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { setPostData } from '../redux/postSlice';
+import { setStoryList } from '../redux/storySlice';
 import { setGlobalDataLoaded } from '../redux/userSlice';
+import { serverUrl } from '../App';
 
-const useGlobalDataLoader = () => {
+function useGlobalDataLoader() {
   const dispatch = useDispatch();
-  const { globalDataLoaded } = useSelector(state => state.user);
 
   useEffect(() => {
-    const loadData = async () => {
-      await useGetAllPost();
-      await useGetAllStories();
-      dispatch(setGlobalDataLoaded(true));
+    const fetchData = async () => {
+      try {
+        const [postsRes, storiesRes] = await Promise.all([
+          axios.get(`${serverUrl}/api/post/all`, { withCredentials: true }),
+          axios.get(`${serverUrl}/api/story/all`, { withCredentials: true }),
+        ]);
+
+        dispatch(setPostData(postsRes.data));
+        dispatch(setStoryList(storiesRes.data));
+
+        dispatch(setGlobalDataLoaded(true)); 
+      } catch (error) {
+        console.error("Global Data Load Error:", error);
+        dispatch(setGlobalDataLoaded(true));  
+      }
     };
 
-    if (!globalDataLoaded) {
-      loadData();
-    }
-  }, [globalDataLoaded, dispatch]);
-};
+    fetchData();
+  }, [dispatch]);
+}
 
 export default useGlobalDataLoader;
+
