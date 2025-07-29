@@ -15,7 +15,7 @@ dotenv.config();
 const port = process.env.PORT;
 
 const allowedOrigins = [
-  "https://echogram-2gxj.vercel.app", 
+  "https://echogram-nu.vercel.app/", 
   "http://localhost:5173" 
 ];
 
