@@ -6,11 +6,17 @@ import { setCurrentUserStory } from '../redux/storySlice';
 import { serverUrl } from '../App';
 import { useNavigate } from 'react-router-dom';
 
+
 function useGetCurrentUser() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
+       
+        const publicPaths = ['/signin', '/signup', '/forgot-password'];
+        if (publicPaths.includes(location.pathname)) return;
+
         const fetchUser = async () => {
             try {
                 const result = await axios.get(`${serverUrl}/api/user/current`, { withCredentials: true });
@@ -30,9 +36,7 @@ function useGetCurrentUser() {
         };
 
         fetchUser();
-    }, [dispatch, navigate]);
+    }, [dispatch, navigate, location.pathname]);
 }
 
 export default useGetCurrentUser;
-
-
