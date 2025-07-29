@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://echogram-2gxj.vercel.app"
+  "https://echogram-nu.vercel.app"
 ];
 
 // CORS for Express
