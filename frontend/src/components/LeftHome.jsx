@@ -19,7 +19,7 @@ function LeftHome() {
         await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
         dispatch(setUserData(null));
         navigate('/signin');
-        window.location.reload();  // Make sure to reload and clear everything from memory
+      
     } catch (error) {
         console.log(error);
     }
