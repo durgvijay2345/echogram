@@ -86,19 +86,22 @@ export const signIn = async (req, res) => {
   }
 };
 
+// Backend: auth.controller.js
+
 export const signOut = async (req, res) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (user) {
-      user.tokenVersion += 1; 
-      await user.save();
+    try {
+        res.clearCookie('token', {
+            httpOnly: true,
+            secure: true, 
+            sameSite: 'None'
+        });
+        return res.status(200).json({ message: "Logged out successfully" });
+    } catch (error) {
+        console.log("Signout Error:", error);
+        return res.status(500).json({ message: "Error in signout" });
     }
-    res.clearCookie('token', { path: '/' });
-    res.status(200).json({ message: "Logged out successfully" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
 };
+
 export const sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
