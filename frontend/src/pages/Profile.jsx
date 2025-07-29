@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setProfileData, setUserData } from '../redux/userSlice'
 import { useEffect } from 'react'
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
-import dp from "../assets/dp.jpg"
+import dp from "../assets/dp.webp"
 import Nav from '../components/Nav'
 import FollowButton from '../components/FollowButton'
 import Post from '../components/Post'
@@ -71,7 +71,7 @@ function Profile() {
                         <div className='flex relative'>
                             {profileData?.followers?.slice(0, 3).map((user, index) => (
 
-                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*10}px]`:""}`}>
+                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*9}px]`:""}`}>
                                     <img src={user.profileImage || dp} alt="" className='w-full object-cover' />
                                 </div>
                             ))}
@@ -159,7 +159,6 @@ function Profile() {
 }
 
 export default Profile
-
 
 
 
