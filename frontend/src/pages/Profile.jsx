@@ -22,18 +22,19 @@ function Profile() {
     const { profileData, userData } = useSelector(state => state.user)
     const { postData } = useSelector(state => state.post)
 
-      const handleLogOut = async () => {
-    try {
-      await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true });
-      dispatch(setProfileData(null));
-    } catch (error) {
-      console.log(error);
-    }
-  };
+      
     const handleProfile = async () => {
         try {
             const result = await axios.get(`${serverUrl}/api/user/getProfile/${userName}`, { withCredentials: true })
             dispatch(setProfileData(result.data))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    const handleLogOut = async () => {
+        try {
+            const result = await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true })
+            dispatch(setUserData(null))
         } catch (error) {
             console.log(error)
         }
