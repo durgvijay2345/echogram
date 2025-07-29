@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
@@ -41,7 +40,7 @@ export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
 
-  // Custom Hooks
+  // Custom Hooks (Data Fetching)
   useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
@@ -55,10 +54,10 @@ function App() {
   const { socket } = useSelector(state => state.socket);
   const dispatch = useDispatch();
 
-  // Socket Setup
-  React.useEffect(() => {
+  // Socket.IO Setup
+  useEffect(() => {
     if (userData) {
-      const socketIo = io(${serverUrl}, {
+      const socketIo = io(`${serverUrl}`, {
         query: {
           userId: userData._id
         }
@@ -69,19 +68,34 @@ function App() {
         dispatch(setOnlineUsers(users));
       });
 
-      return () => socketIo.close();
+      return () => {
+        socketIo.close();
+        dispatch(setSocket(null));
+      };
     } else {
       if (socket) {
         socket.close();
         dispatch(setSocket(null));
       }
     }
-  }, [userData]);
+  }, [userData, dispatch]);
 
-  socket?.on("newNotification", (noti) => {
-    dispatch(setNotificationData([...notificationData, noti]));
-  });
+  // Listen for new notifications (inside useEffect to avoid multiple listeners)
+  useEffect(() => {
+    if (socket) {
+      const handleNewNotification = (noti) => {
+        dispatch(setNotificationData([...notificationData, noti]));
+      };
 
+      socket.on("newNotification", handleNewNotification);
+
+      return () => {
+        socket.off("newNotification", handleNewNotification);
+      };
+    }
+  }, [socket, notificationData, dispatch]);
+
+  // Loader while fetching userData
   if (loading) {
     return (
       <div className="w-full h-screen flex justify-center items-center bg-black">
@@ -161,14 +175,15 @@ function App() {
         </ProtectedRoute>
       } />
 
-      {/* Public (No auth required) */}
+      {/* Public Route without Auth */}
       <Route path='/goodbye' element={<Goodbye />} />
 
-      {/* Not Found Redirect */}
+      {/* Fallback Route */}
       <Route path='*' element={<Navigate to='/' />} />
     </Routes>
   );
 }
 
 export default App;
+
 
