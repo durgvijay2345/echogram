@@ -93,9 +93,9 @@ if (loading) {
 
   return (
     <Routes>
-      <Route path='/signup' element={!userData ? <SignUp /> : <Navigate to='/' />} />
-      <Route path='/signin' element={!userData ? <SignIn /> : <Navigate to='/' />} />
-      <Route path='/' element={userData ? <Home /> : <Navigate to='/signin' />} />
+     <Route path='/signup' element={!userData ? <SignUp /> : <Navigate to='/' />} />
+  <Route path='/signin' element={!userData ? <SignIn /> : <Navigate to='/' />} />
+  <Route path='/' element={userData ? <Home /> : <Navigate to='/signin' />} />
       <Route path="/goodbye" element={<Goodbye />} />
       <Route path='/forgot-password' element={!userData ? <ForgotPassword /> : <Navigate to='/' />} />
       <Route path='/profile/:userName' element={userData ? <Profile /> : <Navigate to='/' />} />
