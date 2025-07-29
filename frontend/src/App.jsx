@@ -1,9 +1,7 @@
-// App.jsx
 import React from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
-
 
 import { setOnlineUsers, setSocket } from './redux/socketSlice';
 import { setNotificationData } from './redux/userSlice';
@@ -33,7 +31,10 @@ import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 import Goodbye from './pages/Goodbye';
 
-import ClipLoader from "react-spinners/ClipLoader";  
+import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
+
+import ClipLoader from "react-spinners/ClipLoader";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
@@ -65,7 +66,6 @@ function App() {
 
       socketIo.on('getOnlineUsers', (users) => {
         dispatch(setOnlineUsers(users));
-        console.log(users);
       });
 
       return () => socketIo.close();
@@ -81,8 +81,7 @@ function App() {
     dispatch(setNotificationData([...notificationData, noti]));
   });
 
-  
-if (loading) {
+  if (loading) {
     return (
       <div className="w-full h-screen flex justify-center items-center bg-black">
         <ClipLoader color="#fff" size={50} />
@@ -90,26 +89,86 @@ if (loading) {
     );
   }
 
-
   return (
     <Routes>
-     <Route path='/signup' element={!userData ? <SignUp /> : <Navigate to='/' />} />
-  <Route path='/signin' element={!userData ? <SignIn /> : <Navigate to='/' />} />
-  <Route path='/' element={userData ? <Home /> : <Navigate to='/signin' />} />
-      <Route path="/goodbye" element={<Goodbye />} />
-      <Route path='/forgot-password' element={!userData ? <ForgotPassword /> : <Navigate to='/' />} />
-      <Route path='/profile/:userName' element={userData ? <Profile /> : <Navigate to='/' />} />
-      <Route path='/story/:userName' element={userData ? <Story /> : <Navigate to='/' />} />
-      <Route path='/upload' element={userData ? <Upload /> : <Navigate to='/' />} />
-      <Route path='/search' element={userData ? <Search /> : <Navigate to='/' />} />
-      <Route path='/editprofile' element={userData ? <EditProfile /> : <Navigate to='/' />} />
-      <Route path='/messages' element={userData ? <Messages /> : <Navigate to='/' />} />
-      <Route path='/messageArea' element={userData ? <MessageArea /> : <Navigate to='/' />} />
-      <Route path='/notifications' element={userData ? <Notifications /> : <Navigate to='/' />} />
-      <Route path='/loops' element={userData ? <Loops /> : <Navigate to='/' />} />
+      {/* Public Routes */}
+      <Route path='/signup' element={
+        <PublicRoute>
+          <SignUp />
+        </PublicRoute>
+      } />
+      <Route path='/signin' element={
+        <PublicRoute>
+          <SignIn />
+        </PublicRoute>
+      } />
+      <Route path='/forgot-password' element={
+        <PublicRoute>
+          <ForgotPassword />
+        </PublicRoute>
+      } />
+
+      {/* Protected Routes */}
+      <Route path='/' element={
+        <ProtectedRoute>
+          <Home />
+        </ProtectedRoute>
+      } />
+      <Route path='/profile/:userName' element={
+        <ProtectedRoute>
+          <Profile />
+        </ProtectedRoute>
+      } />
+      <Route path='/editprofile' element={
+        <ProtectedRoute>
+          <EditProfile />
+        </ProtectedRoute>
+      } />
+      <Route path='/upload' element={
+        <ProtectedRoute>
+          <Upload />
+        </ProtectedRoute>
+      } />
+      <Route path='/loops' element={
+        <ProtectedRoute>
+          <Loops />
+        </ProtectedRoute>
+      } />
+      <Route path='/story/:userName' element={
+        <ProtectedRoute>
+          <Story />
+        </ProtectedRoute>
+      } />
+      <Route path='/messages' element={
+        <ProtectedRoute>
+          <Messages />
+        </ProtectedRoute>
+      } />
+      <Route path='/messageArea' element={
+        <ProtectedRoute>
+          <MessageArea />
+        </ProtectedRoute>
+      } />
+      <Route path='/search' element={
+        <ProtectedRoute>
+          <Search />
+        </ProtectedRoute>
+      } />
+      <Route path='/notifications' element={
+        <ProtectedRoute>
+          <Notifications />
+        </ProtectedRoute>
+      } />
+
+      {/* Public (No auth required) */}
+      <Route path='/goodbye' element={<Goodbye />} />
+
+      {/* Not Found Redirect */}
+      <Route path='*' element={<Navigate to='/' />} />
     </Routes>
   );
 }
 
 export default App;
+
 
