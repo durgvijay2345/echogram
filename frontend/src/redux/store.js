@@ -5,7 +5,7 @@ import storySlice from "./storySlice"
 import loopSlice from "./loopSlice"
 import messageSlice from "./messageSlice"
 import socketSlice from "./socketSlice"
-import appReducer from './appSlice';
+
 const store = configureStore({
     reducer: {
         user: userSlice,
@@ -14,7 +14,7 @@ const store = configureStore({
         loop: loopSlice,
         message:messageSlice,
         socket:socketSlice,
-        app: appReducer,
+       
     }
 })
 
