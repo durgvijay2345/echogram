@@ -16,7 +16,7 @@ function LeftHome() {
 
    const handleLogOut = async () => {
     try {
-      await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true });
+      await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
       dispatch(setUserData(null));
     } catch (error) {
       console.log(error);
