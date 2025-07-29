@@ -25,6 +25,7 @@ function Profile() {
         try {
             const result = await axios.get(`${serverUrl}/api/user/getProfile/${userName}`, { withCredentials: true })
             dispatch(setProfileData(result.data))
+            navigate("/signin")
         } catch (error) {
             console.log(error)
         }
