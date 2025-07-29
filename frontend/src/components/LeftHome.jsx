@@ -14,16 +14,14 @@ function LeftHome() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
- const handleLogOut = async () => {
-  try {
-    await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
-    dispatch(setUserData(null));
-    
-   
-  } catch (error) {
-    console.log(error);
-  }
-};
+   const handleLogOut = async () => {
+    try {
+      await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true });
+      dispatch(setUserData(null));
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className='w-[25%] hidden lg:block h-[100vh] bg-[black] border-r-2 border-gray-900 overflow-auto'>
