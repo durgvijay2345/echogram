@@ -11,7 +11,7 @@ function useGetAllStories() {
     useEffect(() => {
         const fetchStories = async () => {
             try {
-                const result = await axios.get(`${serverUrl}/api/story/all`, { withCredentials: true });
+                const result = await axios.get(`${serverUrl}/api/story/getAll`, { withCredentials: true });
                 dispatch(setStoryData(result.data));
             } catch (error) {
                 console.log(error);
