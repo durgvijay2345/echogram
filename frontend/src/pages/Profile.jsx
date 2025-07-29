@@ -34,7 +34,8 @@ function Profile() {
     try {
         await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
         dispatch(setUserData(null));
-        navigate('/signin');
+        
+       window.location.href = "/signin";
         
     } catch (error) {
         console.log(error);
