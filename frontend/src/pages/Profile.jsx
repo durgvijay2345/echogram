@@ -21,14 +21,10 @@ function Profile() {
     const [postType,setPostType]=useState("posts")
     const { profileData, userData } = useSelector(state => state.user)
     const { postData } = useSelector(state => state.post)
-
-      
     const handleProfile = async () => {
         try {
             const result = await axios.get(`${serverUrl}/api/user/getProfile/${userName}`, { withCredentials: true })
             dispatch(setProfileData(result.data))
-              navigate('/signin');
-    window.location.reload();
         } catch (error) {
             console.log(error)
         }
@@ -37,17 +33,14 @@ function Profile() {
         try {
             const result = await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true })
             dispatch(setUserData(null))
-            
         } catch (error) {
             console.log(error)
         }
     }
-   
+
     useEffect(() => {
         handleProfile()
     }, [userName, dispatch])
-
-
     return (
         <div className='w-full min-h-screen bg-black'>
             <div className='w-full h-[80px] flex justify-between items-center px-[30px] text-white'>
@@ -78,7 +71,7 @@ function Profile() {
                         <div className='flex relative'>
                             {profileData?.followers?.slice(0, 3).map((user, index) => (
 
-                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*10}px]`:""}`}>
+                                <div className={`w-[40px] h-[40px]  border-2 border-black rounded-full cursor-pointer overflow-hidden ${index>0?`absolute left-[${index*9}px]`:""}`}>
                                     <img src={user.profileImage || dp} alt="" className='w-full object-cover' />
                                 </div>
                             ))}
@@ -166,6 +159,7 @@ function Profile() {
 }
 
 export default Profile
+
 
 
 
