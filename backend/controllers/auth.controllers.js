@@ -35,14 +35,14 @@ export const signUp = async (req, res) => {
       password: hashedPassword,
     });
 
-    // Generate token
+   
     const token = await genToken(user._id);
 
-    // Set cookie
+   
     res.cookie("token", token, {
       httpOnly: true,
-      maxAge: 10 * 365 * 24 * 60 * 60 * 1000, // 10 years
-      secure: true, // Set to true in production with HTTPS
+      maxAge: 10 * 365 * 24 * 60 * 60 * 1000, 
+      secure: true, 
       sameSite: "None",
     });
 
@@ -87,16 +87,17 @@ export const signIn = async (req, res) => {
 };
 
 export const signOut = async (req, res) => {
-    try {
-        res.clearCookie("token", {
-            httpOnly: true,
-            secure: true,
-            sameSite: "None"  
-        });
-        return res.status(200).json({ message: "Logged out successfully" });
-    } catch (error) {
-        return res.status(500).json({ message: "Error during signout" });
+  try {
+    const user = await User.findById(req.userId);
+    if (user) {
+      user.tokenVersion += 1; 
+      await user.save();
     }
+    res.clearCookie('token', { path: '/' });
+    res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
 export const sendOtp = async (req, res) => {
   try {
