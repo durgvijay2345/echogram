@@ -1,28 +1,36 @@
 import axios from 'axios';
 import { useEffect } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
-import { setUserData } from '../redux/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { setUserData, clearUserData } from '../redux/userSlice';
 import { setCurrentUserStory } from '../redux/storySlice';
 import { serverUrl } from '../App';
-
+import { useNavigate } from 'react-router-dom';
 
 function useGetCurrentUser() {
     const dispatch = useDispatch();
-    const userData=useSelector(state=>state.user)
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
             try {
                 const result = await axios.get(`${serverUrl}/api/user/current`, { withCredentials: true });
-                dispatch(setUserData(result.data));
-                dispatch(setCurrentUserStory(result.data.story));
+                
+                if (result.data) {
+                    dispatch(setUserData(result.data));
+                    dispatch(setCurrentUserStory(result.data.story));
+                } else {
+                    dispatch(clearUserData());
+                    navigate('/signin');
+                }
             } catch (error) {
-                console.log(error);
+                console.log("User Fetch Error", error);
+                dispatch(clearUserData());
+                navigate('/signin');
             }
         };
 
         fetchUser();
-    }, [userData]);
+    }, [dispatch, navigate]);
 }
 
 export default useGetCurrentUser;
