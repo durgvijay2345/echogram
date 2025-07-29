@@ -10,7 +10,7 @@ const userSlice = createSlice({
     searchData: null,
     notificationData: [],
     loading: true,
-    globalDataLoaded: false, 
+    
   },
   reducers: {
     setUserData: (state, action) => {
@@ -44,9 +44,7 @@ const userSlice = createSlice({
         state.following.push(targetUserId);
       }
     },
-    setGlobalDataLoaded: (state, action) => {
-      state.globalDataLoaded = action.payload;
-    }
+  
   }
 });
 
@@ -59,7 +57,7 @@ export const {
   setFollowing,
   setSearchData,
   setNotificationData,
-  setGlobalDataLoaded 
+ 
 } = userSlice.actions;
 
 export default userSlice.reducer;
