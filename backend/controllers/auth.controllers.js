@@ -68,9 +68,10 @@ export const signIn = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password!" });
     }
 
-    // Generate token
-    const token = await genToken(user._id);
+      user.tokenVersion += 1;
+    await user.save();
 
+    const token = await genToken(user._id, user.tokenVersion);
     // Set cookie
     res.cookie("token", token, {
       httpOnly: true,
