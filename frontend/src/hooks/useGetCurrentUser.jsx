@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUserData, clearUserData } from '../redux/userSlice';
 import { setCurrentUserStory } from '../redux/storySlice';
 import { serverUrl } from '../App';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate ,useLocation} from 'react-router-dom';
+
 
 
 function useGetCurrentUser() {
