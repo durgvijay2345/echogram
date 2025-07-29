@@ -21,6 +21,15 @@ function Profile() {
     const [postType,setPostType]=useState("posts")
     const { profileData, userData } = useSelector(state => state.user)
     const { postData } = useSelector(state => state.post)
+
+      const handleLogOut = async () => {
+    try {
+      await axios.get(${serverUrl}/api/auth/signout, { withCredentials: true });
+      dispatch(setUserData(null));
+    } catch (error) {
+      console.log(error);
+    }
+  };
     const handleProfile = async () => {
         try {
             const result = await axios.get(`${serverUrl}/api/user/getProfile/${userName}`, { withCredentials: true })
@@ -33,16 +42,7 @@ function Profile() {
     useEffect(() => {
         handleProfile()
     }, [userName, dispatch])
- const handleLogOut = async () => {
-  try {
-    await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
-    dispatch(setUserData(null));
-    navigate('/signin');
-    window.location.reload();
-  } catch (error) {
-    console.log(error);
-  }
-};
+
 
     return (
         <div className='w-full min-h-screen bg-black'>
