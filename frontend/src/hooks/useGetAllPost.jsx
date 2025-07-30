@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { setUserData } from '../redux/userSlice'
 import { setPostData } from '../redux/postSlice'
 
-function getAllPost() {
+function useGetAllPost() {
     const dispatch=useDispatch()
     const {userData}=useSelector(state=>state.user)
   useEffect(()=>{
@@ -21,5 +21,5 @@ fetchPost()
   },[dispatch,userData])
 }
 
-export default getAllPost
+export default useGetAllPost
 
