@@ -6,6 +6,7 @@ import { serverUrl } from '../App';
 
 function useGetAllLoops() {
     const dispatch = useDispatch();
+        const {userData}=useSelector(state=>state.user)
 
     useEffect(() => {
         const fetchLoops = async () => {
@@ -17,8 +18,8 @@ function useGetAllLoops() {
             }
         };
 
-        fetchLoops();  // Run once on component mount
-    }, []);
+        fetchLoops();  
+    }, [userData,dispatch]);
 }
 
 export default useGetAllLoops;
