@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setUserData, clearUserData } from '../redux/userSlice';
 import { setCurrentUserStory } from '../redux/storySlice';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from '../utils/axios';  // Axios instance with token
+import axios from 'axios'; 
 
 function useGetCurrentUser() {
     const dispatch = useDispatch();
@@ -19,13 +19,20 @@ function useGetCurrentUser() {
             if (!publicPaths.includes(location.pathname)) {
                 navigate('/signin');
             }
-            return; // No token, no API call
+            return; 
         }
 
         if (!userData) {
             const fetchUser = async () => {
                 try {
-                    const result = await axios.get('/user/current');
+                    const result = await axios.get(
+                        'https://echogram-backend-wkov.onrender.com/api/user/current',
+                        {
+                            headers: {
+                                Authorization: `Bearer ${token}`,
+                            },
+                        }
+                    );
                     if (result.data) {
                         dispatch(setUserData(result.data));
                         dispatch(setCurrentUserStory(result.data.story));
@@ -45,4 +52,5 @@ function useGetCurrentUser() {
 }
 
 export default useGetCurrentUser;
+
 
