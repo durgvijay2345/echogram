@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import logo1 from "../assets/echo1.png";
 import logo2 from "../assets/echo2.png";
@@ -24,6 +24,16 @@ function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  
+  useEffect(() => {
+    if (userName !== "") {
+      setInputClicked(prev => ({ ...prev, userName: true }));
+    }
+    if (password !== "") {
+      setInputClicked(prev => ({ ...prev, password: true }));
+    }
+  }, [userName, password]);
+
   const handleSignIn = async () => {
     setLoading(true);
     setErr("");
@@ -38,16 +48,15 @@ function SignIn() {
       const userData = result.data;
       console.log("SignIn API Response:", userData);
 
-      // Store token and userData in localStorage
+      // Save token & userData in localStorage
       localStorage.setItem("token", userData.token);
       localStorage.setItem("userData", JSON.stringify(userData));
 
-      // Update Redux store
       dispatch(setUserData(userData));
 
       toast.success(userData.message || "Sign In Successful!");
       setLoading(false);
-      navigate("/"); // Go to Home Page
+      navigate("/");
     } catch (error) {
       setErr(error.response?.data?.message || "Something went wrong");
       setLoading(false);
@@ -56,12 +65,10 @@ function SignIn() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex justify-center items-center px-4 py-8">
-      <div className="w-full max-w-6xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
+      <div className="w-full max-w-5xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Form Section */}
-        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center p-6 sm:p-8 gap-6">
-
-          {/* Title */}
+        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-8 gap-6 min-h-[400px]">
           <div className="flex items-center text-xl sm:text-2xl font-semibold">
             <span className="text-2xl sm:text-3xl font-bold tracking-widest bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent animate-text-glow shadow-lg drop-shadow-[0_2px_10px_rgba(255,100,100,0.4)]">
               Sign In
@@ -69,7 +76,7 @@ function SignIn() {
             <img src={logo1} alt="Echogram Logo" className="w-[100px] sm:w-[130px] h-auto object-contain ml-2" />
           </div>
 
-          {/* Username Input */}
+          {/* Username */}
           <div className="relative w-[90%] h-[50px] rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
             <label htmlFor="username" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.userName || userName ? "top-[-10px] text-xs" : ""}`}>
               Enter Username
@@ -80,14 +87,14 @@ function SignIn() {
               name="username"
               autoComplete="username"
               className="w-full h-full bg-transparent text-white px-4 pt-2 outline-none rounded-2xl"
-              onClick={() => setInputClicked({ ...inputClicked, userName: true })}
+              onClick={() => setInputClicked(prev => ({ ...prev, userName: true }))}
               onChange={(e) => setUserName(e.target.value)}
               value={userName}
               required
             />
           </div>
 
-          {/* Password Input */}
+          {/* Password */}
           <div className="relative w-[90%] h-[50px] rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
             <label htmlFor="password" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.password || password ? "top-[-10px] text-xs" : ""}`}>
               Enter Password
@@ -98,7 +105,7 @@ function SignIn() {
               name="password"
               autoComplete="current-password"
               className="w-full h-full bg-transparent text-white px-4 pt-2 outline-none rounded-2xl"
-              onClick={() => setInputClicked({ ...inputClicked, password: true })}
+              onClick={() => setInputClicked(prev => ({ ...prev, password: true }))}
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required
@@ -116,7 +123,7 @@ function SignIn() {
             )}
           </div>
 
-        
+          {/* Forgot Password */}
           <Link
             to="/forgot-password"
             className="w-[90%] text-sm text-red-400 hover:underline text-right"
@@ -124,7 +131,7 @@ function SignIn() {
             Forgot Password?
           </Link>
 
-         
+          {/* Error */}
           {err && <p className="text-red-500 text-center">{err}</p>}
 
           {/* Sign In Button */}
@@ -149,11 +156,11 @@ function SignIn() {
         </div>
 
        
-        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center gap-6 p-4 sm:p-6">
+        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center gap-6 p-4 sm:p-6 min-h-[400px]">
           <img
             src={logo2}
             alt="logo"
-            className="w-[60%] max-w-[200px] sm:max-w-[250px] rounded-full shadow-lg border-4 border-pink-600 hover:scale-105 transition-transform duration-300"
+            className="w-[50%] sm:w-[60%] max-w-[200px] sm:max-w-[250px] rounded-full shadow-lg border-4 border-pink-600 hover:scale-105 transition-transform duration-300"
           />
           <p className="text-xl sm:text-2xl font-bold italic uppercase text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent tracking-wider drop-shadow-[2px_2px_5px_rgba(255,255,255,0.3)]">
             Your Vibe. Your Echo. Your Story.
@@ -165,4 +172,5 @@ function SignIn() {
 }
 
 export default SignIn;
+
 
