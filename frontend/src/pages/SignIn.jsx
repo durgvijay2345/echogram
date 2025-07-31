@@ -24,7 +24,7 @@ function SignIn() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  
+  // Floating label fix on autofill / direct route
   useEffect(() => {
     if (userName !== "") {
       setInputClicked(prev => ({ ...prev, userName: true }));
@@ -46,14 +46,10 @@ function SignIn() {
       );
 
       const userData = result.data;
-      console.log("SignIn API Response:", userData);
-
-      // Save token & userData in localStorage
       localStorage.setItem("token", userData.token);
       localStorage.setItem("userData", JSON.stringify(userData));
 
       dispatch(setUserData(userData));
-
       toast.success(userData.message || "Sign In Successful!");
       setLoading(false);
       navigate("/");
@@ -65,19 +61,19 @@ function SignIn() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex justify-center items-center px-4 py-8">
-      <div className="w-full max-w-5xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
+      <div className="w-full max-w-6xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Form Section */}
-        <div className="w-full lg:w-1/2 flex flex-col justify-center items-center p-6 sm:p-8 gap-6 min-h-[400px]">
-          <div className="flex items-center text-xl sm:text-2xl font-semibold">
-            <span className="text-2xl sm:text-3xl font-bold tracking-widest bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent animate-text-glow shadow-lg drop-shadow-[0_2px_10px_rgba(255,100,100,0.4)]">
+        <div className="w-full lg:w-1/2 bg-white/20 text-white flex flex-col items-center justify-center p-8 gap-6 min-h-[400px]">
+          <div className="flex items-center text-[22px] font-semibold">
+            <span className="text-3xl font-bold tracking-widest bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent animate-text-glow shadow-lg drop-shadow-[0_2px_10px_rgba(255,100,100,0.4)]">
               Sign In
             </span>
-            <img src={logo1} alt="Echogram Logo" className="w-[100px] sm:w-[130px] h-auto object-contain ml-2" />
+            <img src={logo1} alt="Echogram Logo" className="w-[130px] h-auto max-h-[100px] object-contain ml-2" />
           </div>
 
           {/* Username */}
-          <div className="relative w-[90%] h-[50px] rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
+          <div className="relative w-[90%] h-[52px] rounded-2xl border border-white/40 bg-white/5 focus-within:ring-2 ring-pink-400">
             <label htmlFor="username" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.userName || userName ? "top-[-10px] text-xs" : ""}`}>
               Enter Username
             </label>
@@ -95,7 +91,7 @@ function SignIn() {
           </div>
 
           {/* Password */}
-          <div className="relative w-[90%] h-[50px] rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
+          <div className="relative w-[90%] h-[52px] rounded-2xl border border-white/40 bg-white/5 focus-within:ring-2 ring-pink-400">
             <label htmlFor="password" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.password || password ? "top-[-10px] text-xs" : ""}`}>
               Enter Password
             </label>
@@ -131,38 +127,35 @@ function SignIn() {
             Forgot Password?
           </Link>
 
-          {/* Error */}
-          {err && <p className="text-red-500 text-center">{err}</p>}
+          {/* Error Message */}
+          {err && <p className="text-red-400">{err}</p>}
 
           {/* Sign In Button */}
           <button
             onClick={handleSignIn}
             disabled={loading}
-            className="w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition transform duration-300 text-white font-bold shadow-md"
+            className="mt-2 w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition transform duration-300 text-white font-bold shadow-lg"
           >
-            {loading ? <ClipLoader size={25} color="white" /> : "Sign In"}
+            {loading ? <ClipLoader size={25} color='white' /> : "Sign In"}
           </button>
 
-          {/* Switch to Sign Up */}
-          <p className="text-sm text-gray-200">
+          {/* Redirect to Sign Up */}
+          <p className="text-gray-300 text-sm mt-2">
             Don’t have an account?{" "}
-            <span
-              onClick={() => navigate("/signup")}
-              className="text-blue-400 underline cursor-pointer"
-            >
+            <span onClick={() => navigate("/signup")} className="text-pink-400 underline cursor-pointer">
               Sign Up
             </span>
           </p>
         </div>
 
-       
-        <div className="w-full lg:w-1/2 flex flex-col items-center justify-center gap-6 p-4 sm:p-6 min-h-[400px]">
+        {/* Right Side (Logo + Slogan) */}
+        <div className="w-full lg:w-1/2 bg-black text-white flex flex-col items-center justify-center gap-6 p-6 min-h-[400px]">
           <img
             src={logo2}
             alt="logo"
-            className="w-[50%] sm:w-[60%] max-w-[200px] sm:max-w-[250px] rounded-full shadow-lg border-4 border-pink-600 hover:scale-105 transition-transform duration-300"
+            className="w-[60%] max-w-[250px] rounded-full shadow-lg border-4 border-pink-600 hover:scale-105 transition-transform duration-300"
           />
-          <p className="text-xl sm:text-2xl font-bold italic uppercase text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent tracking-wider drop-shadow-[2px_2px_5px_rgba(255,255,255,0.3)]">
+          <p className="text-3xl font-bold italic uppercase text-center bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent tracking-wider drop-shadow-[2px_2px_5px_rgba(255,255,255,0.3)]">
             Your Vibe. Your Echo. Your Story.
           </p>
         </div>
