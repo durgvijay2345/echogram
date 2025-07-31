@@ -58,32 +58,22 @@
   animation-play-state: paused;
 }
 
-input:-webkit-autofill,
-input:-webkit-autofill:hover, 
-input:-webkit-autofill:focus, 
-input:-webkit-autofill:active {
-    transition: background-color 9999s ease-in-out 0s, color 9999s ease-in-out 0s;
-    -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
-    -webkit-text-fill-color: #fff !important;
+input:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset !important;
+  -webkit-text-fill-color: #fff !important;
 }
 
-
+/* Prevent iOS zoom & jump */
 input, select, textarea {
-    font-size: 16px;
+  font-size: 16px;
 }
 
-
-input:focus {
-    scroll-margin-top: 100px;
+/* Prevent scroll jump on focus */
+html {
+  scroll-behavior: smooth;
 }
 
-
+/* Floating label smoothness */
 label {
-    transition: all 0.2s ease-in-out;
+  transition: all 0.2s ease-in-out;
 }
-
-
-input:focus, button:focus {
-    outline: none;
-}
-
