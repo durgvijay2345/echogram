@@ -6,7 +6,6 @@ import { io } from "socket.io-client";
 import { setOnlineUsers, setSocket } from './redux/socketSlice';
 import { setNotificationData, setUserData } from './redux/userSlice';
 
-import useGetCurrentUser from './hooks/useGetCurrentUser';
 import useGetAllPost from './hooks/useGetAllPost';
 import useGetAllLoops from './hooks/useGetAllLoops';
 import useGetAllStories from './hooks/useGetAllStories';
@@ -39,20 +38,20 @@ import ClipLoader from "react-spinners/ClipLoader";
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
+
   const dispatch = useDispatch();
   const { userData, notificationData, loading } = useSelector(state => state.user);
   const { socket } = useSelector(state => state.socket);
 
-  // 1️⃣ Restore userData from LocalStorage on Refresh
+  // Load userData from LocalStorage on App Load
   useEffect(() => {
-    const storedUserData = localStorage.getItem("userData");
-    if (storedUserData) {
-      dispatch(setUserData(JSON.parse(storedUserData)));
+    const savedUser = localStorage.getItem('userData');
+    if (savedUser) {
+      dispatch(setUserData(JSON.parse(savedUser)));
     }
   }, [dispatch]);
 
-  // 2️⃣ Data Fetching Hooks (only if userData exists)
-  useGetCurrentUser();
+  // Data Fetching Hooks
   useGetSuggestedUsers();
   useGetAllPost();
   useGetAllLoops();
@@ -61,13 +60,11 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  // 3️⃣ Socket.IO Setup
+  // Socket.IO Setup
   useEffect(() => {
     if (userData) {
       const socketIo = io(`${serverUrl}`, {
-        query: {
-          userId: userData._id
-        }
+        query: { userId: userData._id }
       });
       dispatch(setSocket(socketIo));
 
@@ -87,13 +84,12 @@ function App() {
     }
   }, [userData, dispatch]);
 
-  // 4️⃣ Real-time Notification Listener
+  // Listen for new notifications
   useEffect(() => {
     if (socket) {
       const handleNewNotification = (noti) => {
         dispatch(setNotificationData([...notificationData, noti]));
       };
-
       socket.on("newNotification", handleNewNotification);
 
       return () => {
@@ -102,7 +98,7 @@ function App() {
     }
   }, [socket, notificationData, dispatch]);
 
-  // 5️⃣ Loader while fetching userData
+  // Loader while fetching
   if (loading) {
     return (
       <div className="w-full h-screen flex justify-center items-center bg-black">
@@ -140,6 +136,7 @@ function App() {
 }
 
 export default App;
+
 
 
 
