@@ -38,6 +38,7 @@ function SignIn() {
       );
       console.log("SignIn API Response:", result.data);
      dispatch(setUserData(result.data))
+      localStorage.setItem("userData", JSON.stringify(result.data)); 
 
       toast.success(result.data.message || "user Sign in succesfull")
       setLoading(false);
