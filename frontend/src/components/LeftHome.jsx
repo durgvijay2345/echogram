@@ -18,7 +18,7 @@ function LeftHome() {
     try {
         await axios.get(`${serverUrl}/api/auth/signout`, { withCredentials: true });
         dispatch(setUserData(null));
-      localStorage.removeItem('userData');
+    
         navigate("/signin")
       
     } catch (error) {
