@@ -60,11 +60,11 @@ function SignIn() {
   };
 
   return (
-    <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex justify-center items-center px-4 py-8">
-      <div className="w-full mt-30 max-w-6xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
+  <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex justify-center items-center px-4 py-8">
+  <div className="w-full max-w-6xl h-auto lg:h-[80vh] bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Form Section */}
-        <div className="w-full lg:w-1/2 bg-white/20 text-white flex flex-col items-center justify-center p-8 gap-6 min-h-[400px]">
+        <div className="w-full lg:w-1/2 h-full overflow-y-auto scrollbar-hide flex flex-col items-center justify-center p-6 gap-6">
           <div className="flex items-center text-[22px] font-semibold">
             <span className="text-3xl font-bold tracking-widest bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent animate-text-glow shadow-lg drop-shadow-[0_2px_10px_rgba(255,100,100,0.4)]">
               Sign In
@@ -149,7 +149,7 @@ function SignIn() {
         </div>
 
         {/* Right Side (Logo + Slogan) */}
-        <div className="w-full lg:w-1/2 bg-black text-white flex flex-col items-center justify-center gap-6 p-6 min-h-[400px]">
+       <div className="w-full lg:w-1/2 hidden lg:flex flex-col items-center justify-center gap-6 p-6">
           <img
             src={logo2}
             alt="logo"
