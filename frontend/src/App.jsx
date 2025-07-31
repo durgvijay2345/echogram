@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { io } from "socket.io-client";
 
 import { setOnlineUsers, setSocket } from './redux/socketSlice';
-import { setNotificationData } from './redux/userSlice';
+import { setNotificationData, setUserData } from './redux/userSlice';
 
 import useGetCurrentUser from './hooks/useGetCurrentUser';
 import useGetAllPost from './hooks/useGetAllPost';
@@ -39,8 +39,19 @@ import ClipLoader from "react-spinners/ClipLoader";
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
+  const dispatch = useDispatch();
+  const { userData, notificationData, loading } = useSelector(state => state.user);
+  const { socket } = useSelector(state => state.socket);
 
-  // Custom Hooks (Data Fetching)
+  // 1️⃣ Restore userData from LocalStorage on Refresh
+  useEffect(() => {
+    const storedUserData = localStorage.getItem("userData");
+    if (storedUserData) {
+      dispatch(setUserData(JSON.parse(storedUserData)));
+    }
+  }, [dispatch]);
+
+  // 2️⃣ Data Fetching Hooks (only if userData exists)
   useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
@@ -50,11 +61,7 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  const { userData, notificationData, loading } = useSelector(state => state.user);
-  const { socket } = useSelector(state => state.socket);
-  const dispatch = useDispatch();
-
-  // Socket.IO Setup
+  // 3️⃣ Socket.IO Setup
   useEffect(() => {
     if (userData) {
       const socketIo = io(`${serverUrl}`, {
@@ -80,7 +87,7 @@ function App() {
     }
   }, [userData, dispatch]);
 
-  // Listen for new notifications (inside useEffect to avoid multiple listeners)
+  // 4️⃣ Real-time Notification Listener
   useEffect(() => {
     if (socket) {
       const handleNewNotification = (noti) => {
@@ -95,7 +102,7 @@ function App() {
     }
   }, [socket, notificationData, dispatch]);
 
-  // Loader while fetching userData
+  // 5️⃣ Loader while fetching userData
   if (loading) {
     return (
       <div className="w-full h-screen flex justify-center items-center bg-black">
@@ -107,73 +114,21 @@ function App() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path='/signup' element={
-        <PublicRoute>
-          <SignUp />
-        </PublicRoute>
-      } />
-      <Route path='/signin' element={
-        <PublicRoute>
-          <SignIn />
-        </PublicRoute>
-      } />
-      <Route path='/forgot-password' element={
-        <PublicRoute>
-          <ForgotPassword />
-        </PublicRoute>
-      } />
+      <Route path='/signup' element={<PublicRoute><SignUp /></PublicRoute>} />
+      <Route path='/signin' element={<PublicRoute><SignIn /></PublicRoute>} />
+      <Route path='/forgot-password' element={<PublicRoute><ForgotPassword /></PublicRoute>} />
 
       {/* Protected Routes */}
-      <Route path='/' element={
-        <ProtectedRoute>
-          <Home />
-        </ProtectedRoute>
-      } />
-      <Route path='/profile/:userName' element={
-        <ProtectedRoute>
-          <Profile />
-        </ProtectedRoute>
-      } />
-      <Route path='/editprofile' element={
-        <ProtectedRoute>
-          <EditProfile />
-        </ProtectedRoute>
-      } />
-      <Route path='/upload' element={
-        <ProtectedRoute>
-          <Upload />
-        </ProtectedRoute>
-      } />
-      <Route path='/loops' element={
-        <ProtectedRoute>
-          <Loops />
-        </ProtectedRoute>
-      } />
-      <Route path='/story/:userName' element={
-        <ProtectedRoute>
-          <Story />
-        </ProtectedRoute>
-      } />
-      <Route path='/messages' element={
-        <ProtectedRoute>
-          <Messages />
-        </ProtectedRoute>
-      } />
-      <Route path='/messageArea' element={
-        <ProtectedRoute>
-          <MessageArea />
-        </ProtectedRoute>
-      } />
-      <Route path='/search' element={
-        <ProtectedRoute>
-          <Search />
-        </ProtectedRoute>
-      } />
-      <Route path='/notifications' element={
-        <ProtectedRoute>
-          <Notifications />
-        </ProtectedRoute>
-      } />
+      <Route path='/' element={<ProtectedRoute><Home /></ProtectedRoute>} />
+      <Route path='/profile/:userName' element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path='/editprofile' element={<ProtectedRoute><EditProfile /></ProtectedRoute>} />
+      <Route path='/upload' element={<ProtectedRoute><Upload /></ProtectedRoute>} />
+      <Route path='/loops' element={<ProtectedRoute><Loops /></ProtectedRoute>} />
+      <Route path='/story/:userName' element={<ProtectedRoute><Story /></ProtectedRoute>} />
+      <Route path='/messages' element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+      <Route path='/messageArea' element={<ProtectedRoute><MessageArea /></ProtectedRoute>} />
+      <Route path='/search' element={<ProtectedRoute><Search /></ProtectedRoute>} />
+      <Route path='/notifications' element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
 
       {/* Public Route without Auth */}
       <Route path='/goodbye' element={<Goodbye />} />
@@ -185,5 +140,6 @@ function App() {
 }
 
 export default App;
+
 
 
