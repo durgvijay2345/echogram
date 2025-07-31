@@ -1,10 +1,9 @@
-import axios from 'axios';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData, clearUserData } from '../redux/userSlice';
 import { setCurrentUserStory } from '../redux/storySlice';
-import { serverUrl } from '../App';
-import { useNavigate ,useLocation} from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from '../utils/axios';  // Axios instance with token
 
 function useGetCurrentUser() {
     const dispatch = useDispatch();
@@ -14,13 +13,19 @@ function useGetCurrentUser() {
 
     useEffect(() => {
         const publicPaths = ['/signin', '/signup', '/forgot-password'];
-        if (publicPaths.includes(location.pathname)) return;
 
-        // Only fetch if userData is null
+        const token = localStorage.getItem('token');
+        if (!token) {
+            if (!publicPaths.includes(location.pathname)) {
+                navigate('/signin');
+            }
+            return; // No token, no API call
+        }
+
         if (!userData) {
             const fetchUser = async () => {
                 try {
-                    const result = await axios.get(`${serverUrl}/api/user/current`, { withCredentials: true });
+                    const result = await axios.get('/user/current');
                     if (result.data) {
                         dispatch(setUserData(result.data));
                         dispatch(setCurrentUserStory(result.data.story));
