@@ -57,7 +57,7 @@ function App() {
   // Socket.IO Setup
   useEffect(() => {
     if (userData) {
-      const socketIo = io(${serverUrl}, {
+      const socketIo = io(`${serverUrl}`, {
         query: {
           userId: userData._id
         }
