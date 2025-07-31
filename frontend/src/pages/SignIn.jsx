@@ -61,7 +61,7 @@ function SignIn() {
 
   return (
     <div className="w-full min-h-screen bg-gradient-to-br from-black via-gray-900 to-gray-800 flex justify-center items-center px-4 py-8">
-      <div className="w-full mt-10 max-w-6xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
+      <div className="w-full mt-30 max-w-6xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Form Section */}
         <div className="w-full lg:w-1/2 bg-white/20 text-white flex flex-col items-center justify-center p-8 gap-6 min-h-[400px]">
