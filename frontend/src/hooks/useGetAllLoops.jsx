@@ -1,12 +1,12 @@
 import axios from 'axios';
 import { useEffect } from 'react';
-import { useDispatch,useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { setLoopData } from '../redux/loopSlice';
 import { serverUrl } from '../App';
 
 function useGetAllLoops() {
     const dispatch = useDispatch();
-        const {userData}=useSelector(state=>state.user)
+    const { userData } = useSelector(state => state.user);
 
     useEffect(() => {
         const fetchLoops = async () => {
@@ -18,8 +18,11 @@ function useGetAllLoops() {
             }
         };
 
-        fetchLoops();  
-    }, [userData,dispatch]);
+        if (userData) {  // ✅ Only call API if userData exists
+            fetchLoops();
+        }
+
+    }, [userData, dispatch]);  // Will run whenever userData is set
 }
 
 export default useGetAllLoops;
