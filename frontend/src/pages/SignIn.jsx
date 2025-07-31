@@ -58,8 +58,8 @@ function SignIn() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-br from-black via-gray-900 to-gray-800 flex items-center justify-center px-4 py-8">
-      <div className="w-full max-w-4xl bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden">
+  <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 py-8">
+  <div className="w-full max-w-5xl h-auto bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Side Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center gap-6 p-6 sm:p-8">
@@ -72,7 +72,8 @@ function SignIn() {
           </div>
 
           {/* Username Input */}
-          <div className="relative w-[90%] h-[50px]">
+         <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
+
             <input
               type="text"
               id="username"
@@ -84,7 +85,7 @@ function SignIn() {
               value={userName}
               required
             />
-            <label htmlFor="username" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white transition-all ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-transparent" : ""}`}>
+            <label htmlFor="username" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-transparent" : ""}`}>
               Enter Username
             </label>
           </div>
