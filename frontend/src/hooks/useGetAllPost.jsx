@@ -1,25 +1,23 @@
-import axios from 'axios'
-import React, { useEffect } from 'react'
-import { serverUrl } from '../App'
-import { useDispatch, useSelector } from 'react-redux'
-import { setUserData } from '../redux/userSlice'
-import { setPostData } from '../redux/postSlice'
+// Example: useGetAllPosts.js
+import { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import axios from 'axios';
+import { setAllPosts } from '../redux/postSlice';
+import { serverUrl } from '../App';
 
 function useGetAllPost() {
-    const dispatch=useDispatch()
-    const {userData}=useSelector(state=>state.user)
-  useEffect(()=>{
-const fetchPost=async ()=>{
-    try {
-        const result=await axios.get(`${serverUrl}/api/post/getAll`,{withCredentials:true})
-         dispatch(setPostData(result.data))
-    } catch (error) {
-        console.log(error)
-    }
-}
-fetchPost()
-  },[dispatch,userData])
+    const dispatch = useDispatch();
+    const { userData } = useSelector(state => state.user);
+
+    useEffect(() => {
+        if (userData) {
+            axios.get(`${serverUrl}/api/post/getAll`)
+                .then(res => {
+                    dispatch(setAllPosts(res.data));
+                })
+                .catch(err => console.error(err));
+        }
+    }, [userData, dispatch]);
 }
 
-export default useGetAllPost
-
+export default useGetAllPost;
