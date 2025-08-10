@@ -48,7 +48,7 @@ function App() {
   const { socket } = useSelector((state) => state.socket);
   const dispatch = useDispatch();
 
-  const token = localStorage.getItem("token"); // <-- auth check
+ const token = document.cookie;
 
   // ✅ Only fetch current user if token exists
   if (token) {
