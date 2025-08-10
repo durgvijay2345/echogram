@@ -223,7 +223,7 @@ function App() {
       <Route path="/goodbye" element={<Goodbye />} />
 
     
-      <Route path="*" element={<Navigate to="/" />} />
+     
     </Routes>
   );
 }
