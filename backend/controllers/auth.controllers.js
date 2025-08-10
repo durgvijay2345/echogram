@@ -40,7 +40,7 @@ export const signUp = async (req, res) => {
 
    
     res.cookie("token", token, {
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 10 * 365 * 24 * 60 * 60 * 1000, 
       secure: true, 
       sameSite: "None",
@@ -74,7 +74,7 @@ export const signIn = async (req, res) => {
     const token = await genToken(user._id, user.tokenVersion);
     // Set cookie
     res.cookie("token", token, {
-      httpOnly: true,
+      httpOnly: false,
       maxAge: 10 * 365 * 24 * 60 * 60 * 1000,
       secure: true, 
       sameSite: "None",
@@ -91,7 +91,7 @@ export const signIn = async (req, res) => {
 export const signOut = async (req, res) => {
     try {
         res.clearCookie('token', {
-            httpOnly: true,
+            httpOnly: false,
             secure: true, 
             sameSite: 'None'
         });
