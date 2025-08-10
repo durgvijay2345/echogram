@@ -10,13 +10,14 @@ import loopRouter from "./routes/loop.route.js";
 import storyRouter from "./routes/story.route.js";
 import messageRouter from "./routes/message.route.js";
 import { app, server } from "./socket.js";
+
 dotenv.config();
 
 const port = process.env.PORT;
 
 const allowedOrigins = [
-  "https://echogram-nu.vercel.app/", 
-  "http://localhost:5173" 
+  "https://echogram-nu.vercel.app", // ✅ last slash hata diya
+  "http://localhost:5173"
 ];
 
 app.use(
@@ -24,12 +25,16 @@ app.use(
     origin: allowedOrigins,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
-    
   })
 );
 
 app.use(express.json());
 app.use(cookieParser());
+
+
+app.get("/ping", (req, res) => {
+  res.status(200).send("Server is alive");
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
@@ -39,7 +44,7 @@ app.use("/api/story", storyRouter);
 app.use("/api/message", messageRouter);
 
 server.listen(port, () => {
-    connectDb();
-    console.log("server started");
+  connectDb();
+  console.log("server started on port", port);
 });
 
