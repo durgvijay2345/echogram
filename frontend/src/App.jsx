@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { ClipLoader } from "react-spinners";
+import { io } from "socket.io-client";
 
-// Hooks
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import useGetAllPost from "./hooks/useGetAllPost";
 import useGetAllLoops from "./hooks/useGetAllLoops";
@@ -13,7 +13,6 @@ import useGetPrevChatUsers from "./hooks/useGetPrevChatUsers";
 import useGetAllNotifications from "./hooks/useGetAllNotifications";
 import useGetSuggestedUsers from "./hooks/useGetSuggestedUsers";
 
-// Pages
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -29,13 +28,16 @@ import Search from "./pages/Search";
 import Notifications from "./pages/Notifications";
 import Goodbye from "./pages/Goodbye";
 
-// Routes
+import { setNotificationData } from './redux/userSlice'
+import { setOnlineUsers, setSocket } from './redux/socketSlice'
+
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
+  const dispatch = useDispatch();
   const userLoading = useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
@@ -45,21 +47,45 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  const { userData } = useSelector((state) => state.user);
+  const { userData, notificationData } = useSelector(state => state.user);
+  const { socket } = useSelector(state => state.socket);
 
-  // Show loading spinner until user data is fetched
+  useEffect(() => {
+    let socketIo;
+
+    if (userData) {
+      socketIo = io(serverUrl, { query: { userId: userData._id } });
+      dispatch(setSocket(socketIo));
+
+      socketIo.on('getOnlineUsers', users => {
+        dispatch(setOnlineUsers(users));
+      });
+
+      socketIo.on('newNotification', noti => {
+        dispatch(setNotificationData(prev => [...prev, noti]));
+      });
+    }
+
+    return () => {
+      if (socketIo) {
+        socketIo.off('getOnlineUsers');
+        socketIo.off('newNotification');
+        socketIo.disconnect();
+        dispatch(setSocket(null));
+      }
+    };
+  }, [userData, dispatch]);
+
   if (userLoading) {
     return (
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          height: "100vh",
-          width: "100vw",
-          backgroundColor: "black",
-        }}
-      >
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        height: "100vh",
+        width: "100vw",
+        backgroundColor: "black",
+      }}>
         <ClipLoader color="#ffffff" size={60} />
       </div>
     );
@@ -67,67 +93,24 @@ function App() {
 
   return (
     <Routes>
-      {/* Public Routes */}
-      <Route
-        path="/signup"
-        element={<PublicRoute>{!userData ? <SignUp /> : <Home />}</PublicRoute>}
-      />
-      <Route
-        path="/signin"
-        element={<PublicRoute>{!userData ? <SignIn /> : <Home />}</PublicRoute>}
-      />
-      <Route
-        path="/forgot-password"
-        element={<PublicRoute>{!userData ? <ForgotPassword /> : <Home />}</PublicRoute>}
-      />
-
-      {/* Protected Routes */}
-      <Route
-        path="/"
-        element={<ProtectedRoute>{userData ? <Home /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/profile/:userName"
-        element={<ProtectedRoute>{userData ? <Profile /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/editprofile"
-        element={<ProtectedRoute>{userData ? <EditProfile /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/upload"
-        element={<ProtectedRoute>{userData ? <Upload /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/loops"
-        element={<ProtectedRoute>{userData ? <Loops /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/story/:userName"
-        element={<ProtectedRoute>{userData ? <Story /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/messages"
-        element={<ProtectedRoute>{userData ? <Messages /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/messageArea"
-        element={<ProtectedRoute>{userData ? <MessageArea /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/search"
-        element={<ProtectedRoute>{userData ? <Search /> : <SignIn />}</ProtectedRoute>}
-      />
-      <Route
-        path="/notifications"
-        element={<ProtectedRoute>{userData ? <Notifications /> : <SignIn />}</ProtectedRoute>}
-      />
-
+      <Route path="/signup" element={<PublicRoute>{!userData ? <SignUp /> : <Home />}</PublicRoute>} />
+      <Route path="/signin" element={<PublicRoute>{!userData ? <SignIn /> : <Home />}</PublicRoute>} />
+      <Route path="/forgot-password" element={<PublicRoute>{!userData ? <ForgotPassword /> : <Home />}</PublicRoute>} />
+      <Route path="/" element={<ProtectedRoute>{userData ? <Home /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/profile/:userName" element={<ProtectedRoute>{userData ? <Profile /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/editprofile" element={<ProtectedRoute>{userData ? <EditProfile /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/upload" element={<ProtectedRoute>{userData ? <Upload /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/loops" element={<ProtectedRoute>{userData ? <Loops /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/story/:userName" element={<ProtectedRoute>{userData ? <Story /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/messages" element={<ProtectedRoute>{userData ? <Messages /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/messageArea" element={<ProtectedRoute>{userData ? <MessageArea /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/search" element={<ProtectedRoute>{userData ? <Search /> : <SignIn />}</ProtectedRoute>} />
+      <Route path="/notifications" element={<ProtectedRoute>{userData ? <Notifications /> : <SignIn />}</ProtectedRoute>} />
       <Route path="/goodbye" element={<Goodbye />} />
     </Routes>
   );
 }
 
-export default App; 
+export default App;
 
 
