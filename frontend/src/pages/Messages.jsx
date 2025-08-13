@@ -18,10 +18,13 @@ function Messages() {
     navigate('/messageArea');
   };
 
+  // Ensure prevChatUsers is always an array
+  const prevChats = Array.isArray(prevChatUsers) ? prevChatUsers : [];
+  const followingUsers = Array.isArray(userData?.following) ? userData.following : [];
+
   return (
     <div className='w-full min-h-[100vh] flex flex-col bg-black gap-[20px] p-[10px]'>
-      
-    
+      {/* Header */}
       <div className='w-full h-[80px] flex items-center gap-[20px] px-[20px]'>
         <MdOutlineKeyboardBackspace
           className='text-white cursor-pointer lg:hidden w-[25px] h-[25px]'
@@ -30,24 +33,21 @@ function Messages() {
         <h1 className='text-white text-[20px] font-semibold'>Messages</h1>
       </div>
 
-    
+      {/* Online Users */}
       <div className='w-full h-[80px] flex gap-[20px] justify-start items-center overflow-x-auto p-[20px] border-b-2 border-gray-800'>
-        {userData.following?.map((user, index) => (
-          onlineUsers?.includes(user._id) && (
-            <OnlineUser user={user} key={index} />
-          )
+        {followingUsers.filter(user => onlineUsers?.includes(user._id)).map((user, index) => (
+          <OnlineUser user={user} key={index} />
         ))}
       </div>
 
-   
+      {/* Previous Chats */}
       <div className='w-full h-full overflow-auto flex flex-col gap-[15px] px-[10px]'>
-        {prevChatUsers?.map((user, index) => (
+        {prevChats.map((user, index) => (
           <div
             key={index}
             className='flex items-center gap-[15px] cursor-pointer hover:bg-gray-900 px-[10px] py-[10px] rounded-xl transition'
             onClick={() => handleUserSelect(user)}
           >
-            
             <div className='relative'>
               <div className='w-[55px] h-[55px] rounded-full overflow-hidden border-2 border-black'>
                 <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover' />
@@ -57,7 +57,6 @@ function Messages() {
               )}
             </div>
 
-    
             <div className='flex flex-col'>
               <div className='text-white text-[18px] font-semibold'>{user.userName}</div>
               {onlineUsers?.includes(user._id) && (
@@ -67,7 +66,6 @@ function Messages() {
           </div>
         ))}
       </div>
-
     </div>
   );
 }
