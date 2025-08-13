@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
+import { ClipLoader } from "react-spinners";
+
 import { setOnlineUsers, setSocket } from "./redux/socketSlice";
 import { setNotificationData } from "./redux/userSlice";
 
@@ -38,7 +40,8 @@ import PublicRoute from "./components/PublicRoute";
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
-  const loadingUser = useGetCurrentUser(); // returns loading state
+ 
+  const userLoading = useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
   useGetAllLoops();
@@ -51,8 +54,9 @@ function App() {
   const { socket } = useSelector((state) => state.socket);
   const dispatch = useDispatch();
 
+  //  Socket setup
   useEffect(() => {
-    if (userData) {
+    if (userData && !socket) {
       const socketIo = io(serverUrl, {
         query: { userId: userData._id },
         withCredentials: true,
@@ -62,29 +66,49 @@ function App() {
 
       socketIo.on("getOnlineUsers", (users) => {
         dispatch(setOnlineUsers(users));
+        console.log("Online Users:", users);
       });
 
       return () => {
         socketIo.close();
         dispatch(setSocket(null));
       };
-    } else if (socket) {
+    } else if (!userData && socket) {
       socket.close();
       dispatch(setSocket(null));
     }
-  }, [userData, dispatch]);
+  }, [userData, dispatch, socket]);
 
+  // ✅ Notification listener
   useEffect(() => {
     if (socket) {
-      socket.on("newNotification", (noti) => {
+      const handleNewNotification = (noti) => {
         dispatch(setNotificationData([...notificationData, noti]));
-      });
+      };
+
+      socket.on("newNotification", handleNewNotification);
+      return () => {
+        socket.off("newNotification", handleNewNotification);
+      };
     }
   }, [socket, notificationData, dispatch]);
 
-  // 🛠 Show loader until user is fetched
-  if (loadingUser) {
-    return <div>Loading...</div>;
+ 
+  if (userLoading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100vh",
+          width: "100vw",
+          backgroundColor: "black",
+        }}
+      >
+        <ClipLoader color="#ffffff" size={60} />
+      </div>
+    );
   }
 
   return (
@@ -110,7 +134,6 @@ function App() {
     </Routes>
   );
 }
-
 
 export default App;
 
