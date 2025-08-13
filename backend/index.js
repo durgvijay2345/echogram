@@ -1,4 +1,4 @@
-import express from "express"; 
+import express from "express";
 import dotenv from "dotenv";
 import connectDb from "./config/db.js";
 import cookieParser from "cookie-parser";
@@ -13,15 +13,35 @@ import { app, server } from "./socket.js";
 
 dotenv.config();
 
-const port = process.env.PORT;
+const port = process.env.PORT || 8001;
+
+
+app.set('trust proxy', 1);
+
+
+const allowedOrigins = [
+  "https://echogram-vn2.vercel.app",
+  "http://localhost:5173",
+];
 
 app.use(cors({
-    origin:"https://echogram-vn2.vercel.app",
-    credentials:true
-}))
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
+
+
+app.options("*", cors({
+  origin: allowedOrigins,
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+}));
+
 app.use(express.json());
 app.use(cookieParser());
-
 
 app.get("/ping", (req, res) => {
   res.status(200).send("Server is alive");
