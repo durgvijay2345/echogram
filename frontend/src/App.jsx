@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
+import { io } from "socket.io-client";
 
 // Hooks
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
@@ -35,6 +36,9 @@ import PublicRoute from "./components/PublicRoute";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
+// Global socket variable
+export let socket;
+
 function App() {
   const userLoading = useGetCurrentUser();
   useGetSuggestedUsers();
@@ -47,7 +51,26 @@ function App() {
 
   const { userData } = useSelector((state) => state.user);
 
-  // Show loading spinner until user data is fetched
+  // Initialize Socket.IO when userData is ready
+  useEffect(() => {
+    if (userData) {
+      socket = io(serverUrl, {
+        query: { userId: userData._id }, // backend uses handshake query
+        transports: ["websocket"],
+      });
+
+      // Listen for online users if needed
+      socket.on("getOnlineUsers", (users) => {
+        console.log("Online users:", users);
+      });
+
+      // Cleanup on unmount
+      return () => {
+        if (socket) socket.disconnect();
+      };
+    }
+  }, [userData]);
+
   if (userLoading) {
     return (
       <div
@@ -129,7 +152,6 @@ function App() {
 }
 
 export default App;
-
 
 
 
