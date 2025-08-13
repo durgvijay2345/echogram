@@ -1,11 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { ClipLoader } from "react-spinners";
-import { io } from "socket.io-client";
-
-
-import { setOnlineUsers, setNotificationData } from "./redux/userSlice";
 
 // Hooks
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
@@ -39,12 +35,7 @@ import PublicRoute from "./components/PublicRoute";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
-// Global socket variable
-export let socket;
-
 function App() {
-  const dispatch = useDispatch();
-  const socketRef = useRef(null); 
   const userLoading = useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
@@ -56,36 +47,7 @@ function App() {
 
   const { userData } = useSelector((state) => state.user);
 
-  // Initialize Socket.IO when userData is ready
-  useEffect(() => {
-    if (userData && !socketRef.current) {
-      const socketIo = io(serverUrl, { query: { userId: userData._id } });
-      socketRef.current = socketIo;
-      socket = socketIo; // assign global socket
-
-      // Listen online users
-      socketIo.on("getOnlineUsers", (users) => {
-        dispatch(setOnlineUsers(users));
-      });
-
-      // Listen notifications
-      socketIo.on("newNotification", (noti) => {
-        dispatch(setNotificationData((prevNoti) => [...prevNoti, noti]));
-      });
-
-      return () => {
-        socketIo.disconnect();
-        socketRef.current = null;
-      };
-    }
-
-    // Disconnect socket if user logs out
-    if (!userData && socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
-    }
-  }, [userData, dispatch]);
-
+  // Show loading spinner until user data is fetched
   if (userLoading) {
     return (
       <div
@@ -106,28 +68,67 @@ function App() {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/signup" element={<PublicRoute>{!userData ? <SignUp /> : <Home />}</PublicRoute>} />
-      <Route path="/signin" element={<PublicRoute>{!userData ? <SignIn /> : <Home />}</PublicRoute>} />
-      <Route path="/forgot-password" element={<PublicRoute>{!userData ? <ForgotPassword /> : <Home />}</PublicRoute>} />
+      <Route
+        path="/signup"
+        element={<PublicRoute>{!userData ? <SignUp /> : <Home />}</PublicRoute>}
+      />
+      <Route
+        path="/signin"
+        element={<PublicRoute>{!userData ? <SignIn /> : <Home />}</PublicRoute>}
+      />
+      <Route
+        path="/forgot-password"
+        element={<PublicRoute>{!userData ? <ForgotPassword /> : <Home />}</PublicRoute>}
+      />
 
       {/* Protected Routes */}
-      <Route path="/" element={<ProtectedRoute>{userData ? <Home /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/profile/:userName" element={<ProtectedRoute>{userData ? <Profile /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/editprofile" element={<ProtectedRoute>{userData ? <EditProfile /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/upload" element={<ProtectedRoute>{userData ? <Upload /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/loops" element={<ProtectedRoute>{userData ? <Loops /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/story/:userName" element={<ProtectedRoute>{userData ? <Story /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/messages" element={<ProtectedRoute>{userData ? <Messages /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/messageArea" element={<ProtectedRoute>{userData ? <MessageArea /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/search" element={<ProtectedRoute>{userData ? <Search /> : <SignIn />}</ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute>{userData ? <Notifications /> : <SignIn />}</ProtectedRoute>} />
+      <Route
+        path="/"
+        element={<ProtectedRoute>{userData ? <Home /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/profile/:userName"
+        element={<ProtectedRoute>{userData ? <Profile /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/editprofile"
+        element={<ProtectedRoute>{userData ? <EditProfile /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/upload"
+        element={<ProtectedRoute>{userData ? <Upload /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/loops"
+        element={<ProtectedRoute>{userData ? <Loops /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/story/:userName"
+        element={<ProtectedRoute>{userData ? <Story /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/messages"
+        element={<ProtectedRoute>{userData ? <Messages /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/messageArea"
+        element={<ProtectedRoute>{userData ? <MessageArea /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/search"
+        element={<ProtectedRoute>{userData ? <Search /> : <SignIn />}</ProtectedRoute>}
+      />
+      <Route
+        path="/notifications"
+        element={<ProtectedRoute>{userData ? <Notifications /> : <SignIn />}</ProtectedRoute>}
+      />
+
       <Route path="/goodbye" element={<Goodbye />} />
     </Routes>
   );
 }
 
-export default App;
-
+export default App; 
 
 
 
