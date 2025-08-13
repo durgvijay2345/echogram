@@ -5,7 +5,7 @@ import { ClipLoader } from "react-spinners";
 import { io } from "socket.io-client";
 
 // Redux actions (import your actual slice)
-import { setOnlineUsers, setNotificationData } from "./redux/slices/userSlice";
+import { setOnlineUsers, setNotificationData } from "./redux/userSlice";
 
 // Hooks
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
