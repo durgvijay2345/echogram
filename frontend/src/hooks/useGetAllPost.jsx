@@ -11,7 +11,7 @@ function useGetAllPost() {
 
     useEffect(() => {
         if (userData) {
-            axios.get(`${serverUrl}/api/post/getAll`)
+            axios.get(`${serverUrl}/api/post/getAll, { withCredentials: true }`)
                 .then(res => {
                     dispatch(setPostData(res.data));
                 })
