@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
+import dp from "../assets/dp.jpg"  // fallback image
 
 function ReceiverMessage({ message }) {
   const { selectedUser } = useSelector(state => state.message)
@@ -28,11 +29,17 @@ function ReceiverMessage({ message }) {
       )}
 
       <div className='w-[30px] h-[30px] rounded-full cursor-pointer overflow-hidden absolute left-[-25px] bottom-[-40px]'>
-        <img src={selectedUser.profileImage} alt="" className='w-full object-cover' />
+        <img
+          src={selectedUser?.profileImage || dp} 
+          alt=""
+          className='w-full object-cover'
+          onError={(e) => { e.target.src = dp }}
+        />
       </div>
     </div>
   )
 }
 
 export default ReceiverMessage
+
 
