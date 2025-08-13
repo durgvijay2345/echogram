@@ -84,16 +84,15 @@ function SignIn() {
           {/* Username Input */}
           <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
             <input
-              type="text"
-              id="username"
-              name="username"
-              autoComplete="username"
-              placeholder="Enter Username"
-              className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
-              onFocus={() => setInputClicked(prev => ({ ...prev, userName: true }))}
-              onChange={(e) => setUserName(e.target.value)}
-              value={userName}
-              required
+            <input
+    type="text"
+    id="username"
+    name="username"
+    autoComplete="off"
+    placeholder="Enter Username"
+    value={userName}
+    onChange={(e) => setUserName(e.target.value)}
+  />
             />
             <label
               htmlFor="username"
@@ -107,16 +106,13 @@ function SignIn() {
           {/* Password Input */}
           <div className="relative w-[90%] h-[50px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
             <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              name="password"
-              autoComplete="current-password"
-              placeholder="Enter Password"
-              className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
-              onFocus={() => setInputClicked(prev => ({ ...prev, password: true }))}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              required
+             type="password"
+    id="password"
+    name="password"
+    autoComplete="new-password"
+    placeholder="Enter Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
             />
             <label
               htmlFor="password"
