@@ -41,8 +41,7 @@ import PublicRoute from "./components/PublicRoute";
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
-  const dispatch = useDispatch();
-  const socketRef = useRef(null); // persist socket across renders
+ 
   const userLoading = useGetCurrentUser();
 
   useGetSuggestedUsers();
