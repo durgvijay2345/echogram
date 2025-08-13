@@ -5,7 +5,7 @@ import { GoSearch } from "react-icons/go";
 import { useDispatch, useSelector } from 'react-redux';
 import OnlineUser from '../components/OnlineUser';
 import { setSelectedUser } from '../redux/messageSlice';
-import dp from "../assets/dp.webp"
+import dp from "../assets/dp.jpg"
 function Messages() {
     const navigate=useNavigate()
     const {userData}=useSelector(state=>state.user)
