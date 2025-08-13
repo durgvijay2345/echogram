@@ -1,4 +1,4 @@
-// Example: useGetAllPosts.js
+// hooks/useGetAllPost.js
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -10,14 +10,22 @@ function useGetAllPost() {
     const { userData } = useSelector(state => state.user);
 
     useEffect(() => {
-        if (userData) {
-            axios.get(`${serverUrl}/api/post/getAll`, { withCredentials: true })
-                .then(res => {
-                    dispatch(setPostData(res.data));
-                })
-                .catch(err => console.error(err));
+        const fetchPosts = async () => {
+            try {
+                const res = await axios.get(`${serverUrl}/api/post/getAll`, {
+                    withCredentials: true,
+                });
+                dispatch(setPostData(res.data));
+            } catch (err) {
+                console.error("Failed to fetch posts:", err);
+                dispatch(setPostData([])); // fallback empty data
+            }
+        };
+
+        if (userData?._id) {
+            fetchPosts();
         }
-    }, [userData, dispatch]);
+    }, [userData?._id, dispatch]);
 }
 
 export default useGetAllPost;
