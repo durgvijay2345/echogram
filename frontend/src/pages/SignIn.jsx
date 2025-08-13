@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import logo1 from "../assets/echo1.png";
 import logo2 from "../assets/echo2.png";
@@ -22,27 +22,6 @@ function SignIn() {
   const [err, setErr] = useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
-
-  // Detect autofill on mount
-  useEffect(() => {
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
-
-    if (usernameInput?.value) {
-      setInputClicked(prev => ({ ...prev, userName: true }));
-      setUserName(usernameInput.value);
-    }
-    if (passwordInput?.value) {
-      setInputClicked(prev => ({ ...prev, password: true }));
-      setPassword(passwordInput.value);
-    }
-  }, []);
-
-  // Handle focus styling
-  useEffect(() => {
-    if (userName !== "") setInputClicked(prev => ({ ...prev, userName: true }));
-    if (password !== "") setInputClicked(prev => ({ ...prev, password: true }));
-  }, [userName, password]);
 
   const handleSignIn = async () => {
     setLoading(true);
@@ -73,6 +52,7 @@ function SignIn() {
 
         {/* Left Side Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center gap-6 p-6 sm:p-8">
+
           {/* Logo Title */}
           <div className="flex items-center text-xl sm:text-2xl font-semibold">
             <span className="text-2xl sm:text-3xl font-bold tracking-widest bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 bg-clip-text text-transparent">
@@ -81,86 +61,99 @@ function SignIn() {
             <img src={logo1} alt="Echogram Logo" className="w-[100px] sm:w-[130px] ml-2" />
           </div>
 
-          {/* Username Input */}
-          <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
-            <input
-            <input
-    type="text"
-    id="username"
-    name="username"
-    autoComplete="off"
-    placeholder="Enter Username"
-    value={userName}
-    onChange={(e) => setUserName(e.target.value)}
-  />
-            />
-            <label
-              htmlFor="username"
-              className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
-                ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-black/30" : ""}`}
-            >
-              Enter Username
-            </label>
-          </div>
+          {/* Form */}
+          <form autoComplete="off" className="w-full flex flex-col items-center gap-4">
 
-          {/* Password Input */}
-          <div className="relative w-[90%] h-[50px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
-            <input
-             type="password"
-    id="password"
-    name="password"
-    autoComplete="new-password"
-    placeholder="Enter Password"
-    value={password}
-    onChange={(e) => setPassword(e.target.value)}
-            />
-            <label
-              htmlFor="password"
-              className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
-                ${inputClicked.password || password ? "top-[-10px] text-xs bg-black/30" : ""}`}
-            >
-              Enter Password
-            </label>
-            {showPassword ? (
-              <IoIosEyeOff
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white cursor-pointer"
-                onClick={() => setShowPassword(false)}
+            {/* Username Input */}
+            <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
+              <input
+                type="text"
+                id="username"
+                name="username"
+                autoComplete="off"
+                readOnly
+                onFocus={e => e.target.removeAttribute("readonly")}
+                placeholder="Enter Username"
+                className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+                value={userName}
+                onChange={(e) => setUserName(e.target.value)}
+                onFocusCapture={() => setInputClicked(prev => ({ ...prev, userName: true }))}
+                required
               />
-            ) : (
-              <IoIosEye
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-white cursor-pointer"
-                onClick={() => setShowPassword(true)}
+              <label
+                htmlFor="username"
+                className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
+                  ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-black/30" : ""}`}
+              >
+                Enter Username
+              </label>
+            </div>
+
+            {/* Password Input */}
+            <div className="relative w-[90%] h-[50px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
+              <input
+                type={showPassword ? "text" : "password"}
+                id="password"
+                name="password"
+                autoComplete="new-password"
+                readOnly
+                onFocus={e => e.target.removeAttribute("readonly")}
+                placeholder="Enter Password"
+                className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onFocusCapture={() => setInputClicked(prev => ({ ...prev, password: true }))}
+                required
               />
-            )}
-          </div>
+              <label
+                htmlFor="password"
+                className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
+                  ${inputClicked.password || password ? "top-[-10px] text-xs bg-black/30" : ""}`}
+              >
+                Enter Password
+              </label>
+              {showPassword ? (
+                <IoIosEyeOff
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white cursor-pointer"
+                  onClick={() => setShowPassword(false)}
+                />
+              ) : (
+                <IoIosEye
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white cursor-pointer"
+                  onClick={() => setShowPassword(true)}
+                />
+              )}
+            </div>
 
-          {/* Forgot Password Link */}
-          <Link to="/forgot-password" className="w-[90%] text-sm text-red-400 hover:underline text-right">
-            Forgot Password?
-          </Link>
+            {/* Forgot Password Link */}
+            <Link to="/forgot-password" className="w-[90%] text-sm text-red-400 hover:underline text-right">
+              Forgot Password?
+            </Link>
 
-          {/* Error Message */}
-          {err && <p className="text-red-500 text-center">{err}</p>}
+            {/* Error Message */}
+            {err && <p className="text-red-500 text-center">{err}</p>}
 
-          {/* Sign In Button */}
-          <button
-            onClick={handleSignIn}
-            disabled={loading}
-            className="w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition duration-300 text-white font-bold flex justify-center items-center"
-          >
-            {loading ? <ClipLoader size={25} color="white" /> : "Sign In"}
-          </button>
-
-          {/* Switch to Sign Up */}
-          <p className="text-sm text-gray-200">
-            Don’t have an account?{" "}
-            <span
-              onClick={() => navigate("/signup")}
-              className="text-blue-400 underline cursor-pointer"
+            {/* Sign In Button */}
+            <button
+              type="button"
+              onClick={handleSignIn}
+              disabled={loading}
+              className="w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition duration-300 text-white font-bold flex justify-center items-center"
             >
-              Sign Up
-            </span>
-          </p>
+              {loading ? <ClipLoader size={25} color="white" /> : "Sign In"}
+            </button>
+
+            {/* Switch to Sign Up */}
+            <p className="text-sm text-gray-200">
+              Don’t have an account?{" "}
+              <span
+                onClick={() => navigate("/signup")}
+                className="text-blue-400 underline cursor-pointer"
+              >
+                Sign Up
+              </span>
+            </p>
+          </form>
         </div>
 
         {/* Right Side Image & Slogan */}
@@ -180,7 +173,6 @@ function SignIn() {
 }
 
 export default SignIn;
-
 
 
 
