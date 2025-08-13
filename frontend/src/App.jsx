@@ -38,8 +38,7 @@ import PublicRoute from "./components/PublicRoute";
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
-  // ✅ Always call hooks at top-level
-  useGetCurrentUser();
+  const loadingUser = useGetCurrentUser(); // returns loading state
   useGetSuggestedUsers();
   useGetAllPost();
   useGetAllLoops();
@@ -52,22 +51,19 @@ function App() {
   const { socket } = useSelector((state) => state.socket);
   const dispatch = useDispatch();
 
-  // ✅ Socket setup
   useEffect(() => {
     if (userData) {
       const socketIo = io(serverUrl, {
         query: { userId: userData._id },
-        withCredentials: true, // important for cookies
+        withCredentials: true,
       });
 
       dispatch(setSocket(socketIo));
 
       socketIo.on("getOnlineUsers", (users) => {
         dispatch(setOnlineUsers(users));
-        console.log("Online Users:", users);
       });
 
-      // Cleanup on unmount
       return () => {
         socketIo.close();
         dispatch(setSocket(null));
@@ -78,19 +74,18 @@ function App() {
     }
   }, [userData, dispatch]);
 
-  // ✅ Notification listener
   useEffect(() => {
     if (socket) {
-      const handleNewNotification = (noti) => {
+      socket.on("newNotification", (noti) => {
         dispatch(setNotificationData([...notificationData, noti]));
-      };
-
-      socket.on("newNotification", handleNewNotification);
-      return () => {
-        socket.off("newNotification", handleNewNotification);
-      };
+      });
     }
   }, [socket, notificationData, dispatch]);
+
+  // 🛠 Show loader until user is fetched
+  if (loadingUser) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <Routes>
@@ -115,6 +110,7 @@ function App() {
     </Routes>
   );
 }
+
 
 export default App;
 
