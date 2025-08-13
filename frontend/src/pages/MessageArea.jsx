@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { LuImage } from "react-icons/lu";
 import { IoMdSend } from "react-icons/io";
-import dp from "../assets/dp.webp"
+import dp from "../assets/dp.jpg"
 import SenderMessage from '../components/SenderMessage';
 import axios from 'axios';
 import { serverUrl } from '../App';
