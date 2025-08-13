@@ -6,7 +6,7 @@ const server=http.createServer(app)
 
 const io=new Server(server,{
     cors:{
-        origin:"https://echogram-vn2.vercel.app/",
+        origin:"https://echogram-vn2.vercel.app",
         methods:["GET","POST"]
     }
 })
