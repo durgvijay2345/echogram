@@ -17,12 +17,13 @@ function MessageArea() {
   const { socket } = useSelector(state => state.socket);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const [input, setInput] = useState("");
   const imageInput = useRef();
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
 
-  // Restore selected user from localStorage
+  // Restore selected user from localStorage if missing
   useEffect(() => {
     if (!selectedUser) {
       const savedUser = localStorage.getItem("selectedUser");
@@ -51,8 +52,7 @@ function MessageArea() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!input && !backendImage) return;
-
+    if (!input && !backendImage) return; 
     try {
       const formData = new FormData();
       formData.append("message", input);
@@ -64,6 +64,7 @@ function MessageArea() {
         { withCredentials: true }
       );
 
+      // Update messages state
       dispatch(setMessages(Array.isArray(messages) ? [...messages, result.data] : [result.data]));
       setInput("");
       setBackendImage(null);
@@ -89,21 +90,24 @@ function MessageArea() {
     if (selectedUser) getAllMessages();
   }, [selectedUser]);
 
-  // Socket listener for new messages
+  // Socket: real-time incoming messages
   useEffect(() => {
     if (!socket) return;
 
     const handleNewMessage = (mess) => {
-      // Only update if message belongs to selectedUser chat
-      if (selectedUser && (mess.sender === selectedUser._id || mess.receiver === selectedUser._id)) {
+      // Only add if message is for current chat
+      if (selectedUser && 
+          (mess.sender === selectedUser._id || mess.receiver === selectedUser._id)) {
         dispatch(setMessages(prev => Array.isArray(prev) ? [...prev, mess] : [mess]));
       }
     };
 
     socket.on("newMessage", handleNewMessage);
+
     return () => socket.off("newMessage", handleNewMessage);
   }, [socket, dispatch, selectedUser]);
 
+  // Ensure selectedUser exists before rendering
   if (!selectedUser) {
     return (
       <div className='w-full h-[100vh] bg-black flex justify-center items-center text-white text-xl'>
@@ -128,12 +132,7 @@ function MessageArea() {
           className='w-[40px] h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
           onClick={() => navigate(`/profile/${selectedUser.userName}`)}
         >
-          <img
-            src={selectedUser.profileImage || dp}
-            alt=""
-            className='w-full object-cover'
-            onError={(e)=>{e.target.src=dp}}
-          />
+          <img src={selectedUser.profileImage || dp} alt="" className='w-full object-cover' />
         </div>
         <div className='text-white text-[18px] font-semibold'>
           <div>{selectedUser.userName}</div>
@@ -184,6 +183,7 @@ function MessageArea() {
 }
 
 export default MessageArea;
+
 
 
 
