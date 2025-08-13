@@ -21,6 +21,7 @@ function MessageArea() {
   const imageInput = useRef();
   const [frontendImage, setFrontendImage] = useState(null);
   const [backendImage, setBackendImage] = useState(null);
+  const messagesEndRef = useRef(null);
 
   // Restore selected user from localStorage if missing
   useEffect(() => {
@@ -63,7 +64,7 @@ function MessageArea() {
         { withCredentials: true }
       );
 
-      dispatch(setMessages(Array.isArray(messages) ? [...messages, result.data] : [result.data]));
+      dispatch(setMessages(prev => Array.isArray(prev) ? [...prev, result.data] : [result.data]));
       setInput("");
       setBackendImage(null);
       setFrontendImage(null);
@@ -88,6 +89,7 @@ function MessageArea() {
     if (selectedUser) getAllMessages();
   }, [selectedUser]);
 
+  // Socket listener for new messages
   useEffect(() => {
     if (!socket) return;
 
@@ -96,11 +98,14 @@ function MessageArea() {
     };
 
     socket.on("newMessage", handleNewMessage);
-
     return () => socket.off("newMessage", handleNewMessage);
   }, [socket, dispatch]);
 
-  // Ensure selectedUser exists before rendering
+  // Auto scroll to bottom on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   if (!selectedUser) {
     return (
       <div className='w-full h-[100vh] bg-black flex justify-center items-center text-white text-xl'>
@@ -109,8 +114,25 @@ function MessageArea() {
     );
   }
 
-  // Ensure messages is always an array
   const safeMessages = Array.isArray(messages) ? messages : [];
+
+  const renderMessageContent = (message) => {
+    if(message.image){
+      const ext = message.image.split('.').pop().toLowerCase();
+      if(ext === "pdf"){
+        return (
+          <a href={message.image} target="_blank" rel="noreferrer" className='text-blue-500 underline'>
+            Download PDF
+          </a>
+        )
+      } else if(["mp4","webm","ogg"].includes(ext)){
+        return <video src={message.image} controls className='max-h-[200px] rounded-lg' />
+      } else {
+        return <img src={message.image} alt="msg" className='max-h-[200px] rounded-lg' />
+      }
+    }
+    return <span>{message.message}</span>;
+  }
 
   return (
     <div className='w-full h-[100vh] bg-black relative'>
@@ -138,9 +160,10 @@ function MessageArea() {
       <div className='w-full h-[80%] pt-[100px] px-[40px] flex flex-col gap-[50px] overflow-auto bg-black'>
         {safeMessages.map((mess, index) =>
           mess.sender === userData._id
-            ? <SenderMessage key={index} message={mess} />
-            : <ReceiverMessage key={index} message={mess} />
+            ? <SenderMessage key={index} message={{...mess, message: renderMessageContent(mess)}} />
+            : <ReceiverMessage key={index} message={{...mess, message: renderMessageContent(mess)}} />
         )}
+        <div ref={messagesEndRef}></div>
       </div>
 
       {/* Input */}
@@ -154,7 +177,7 @@ function MessageArea() {
               <img src={frontendImage} alt="" className='h-full object-cover' />
             </div>
           )}
-          <input type="file" accept='image/*' hidden ref={imageInput} onChange={handleImage} />
+          <input type="file" accept='image/*,application/pdf,video/*' hidden ref={imageInput} onChange={handleImage} />
           <input
             type="text"
             placeholder='Message'
@@ -177,4 +200,5 @@ function MessageArea() {
 }
 
 export default MessageArea;
+
 
