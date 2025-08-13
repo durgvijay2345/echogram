@@ -38,7 +38,7 @@ function SignUp() {
         { withCredentials: true }
       );
       dispatch(setUserData(result.data))
-      localStorage.setItem("userData", JSON.stringify(result.data)); 
+   
    toast.success(result.data.message || "user Sign up succesfull")
       setLoading(false);
       // Optional: Redirect after signup
