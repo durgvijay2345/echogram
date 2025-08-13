@@ -1,75 +1,59 @@
-import React from 'react';
+import React from 'react'
 import { MdOutlineKeyboardBackspace } from "react-icons/md";
 import { useNavigate } from 'react-router-dom';
+import { GoSearch } from "react-icons/go";
 import { useDispatch, useSelector } from 'react-redux';
-import { setSelectedUser } from '../redux/messageSlice';
 import OnlineUser from '../components/OnlineUser';
-import dp from "../assets/dp.jpg";
-
+import { setSelectedUser } from '../redux/messageSlice';
+import dp from "../assets/dp.webp"
 function Messages() {
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { userData } = useSelector(state => state.user);
-  const { onlineUsers } = useSelector(state => state.socket);
-  const { prevChatUsers } = useSelector(state => state.message);
-
-  const handleUserSelect = (user) => {
-    dispatch(setSelectedUser(user));
-    navigate('/messageArea');
-  };
-
-  // Ensure prevChatUsers is always an array
-  const prevChats = Array.isArray(prevChatUsers) ? prevChatUsers : [];
-  const followingUsers = Array.isArray(userData?.following) ? userData.following : [];
-
+    const navigate=useNavigate()
+    const {userData}=useSelector(state=>state.user)
+     const {onlineUsers}=useSelector(state=>state.socket)
+      const {prevChatUsers,selectedUsers}=useSelector(state=>state.message)
+const dispatch=useDispatch()
   return (
+
     <div className='w-full min-h-[100vh] flex flex-col bg-black gap-[20px] p-[10px]'>
-      {/* Header */}
-      <div className='w-full h-[80px] flex items-center gap-[20px] px-[20px]'>
-        <MdOutlineKeyboardBackspace
-          className='text-white cursor-pointer lg:hidden w-[25px] h-[25px]'
-          onClick={() => navigate('/')}
-        />
-        <h1 className='text-white text-[20px] font-semibold'>Messages</h1>
-      </div>
+       <div className='w-full h-[80px]  flex items-center gap-[20px] px-[20px]'>
 
-      {/* Online Users */}
-      <div className='w-full h-[80px] flex gap-[20px] justify-start items-center overflow-x-auto p-[20px] border-b-2 border-gray-800'>
-        {followingUsers.filter(user => onlineUsers?.includes(user._id)).map((user, index) => (
-          <OnlineUser user={user} key={index} />
-        ))}
-      </div>
+                      <MdOutlineKeyboardBackspace className='text-white cursor-pointer lg:hidden w-[25px]  h-[25px] ' onClick={() => navigate(`/`)} />
+                      <h1 className='text-white text-[20px] font-semibold'>Messages</h1>
+                  </div>
 
-      {/* Previous Chats */}
-      <div className='w-full h-full overflow-auto flex flex-col gap-[15px] px-[10px]'>
-        {prevChats.map((user, index) => (
-          <div
-            key={index}
-            className='flex items-center gap-[15px] cursor-pointer hover:bg-gray-900 px-[10px] py-[10px] rounded-xl transition'
-            onClick={() => handleUserSelect(user)}
-          >
-            <div className='relative'>
-              <div className='w-[55px] h-[55px] rounded-full overflow-hidden border-2 border-black'>
-                <img src={user.profileImage || dp} alt="" className='w-full h-full object-cover' />
-              </div>
-              {onlineUsers?.includes(user._id) && (
-                <div className='w-[12px] h-[12px] bg-green-500 border-2 border-black rounded-full absolute bottom-0 right-0'></div>
-              )}
-            </div>
+                  <div className='w-full h-[80px] flex gap-[20px] justify-start items-center overflow-x-auto p-[20px] border-b-2 border-gray-800'>
+{userData.following?.map((user,index)=>(
+ 
+  (onlineUsers?.includes(user._id)) && <OnlineUser user={user}/>
+))}
+                  </div>
 
-            <div className='flex flex-col'>
-              <div className='text-white text-[18px] font-semibold'>{user.userName}</div>
-              {onlineUsers?.includes(user._id) && (
-                <div className='text-blue-500 text-[14px]'>Active Now</div>
-              )}
-            </div>
-          </div>
-        ))}
+
+        <div className='w-full h-full overflow-auto flex flex-col gap-[20px]'>
+{prevChatUsers?.map((user,index)=>(
+  <div className='text-white cursor-pointer w-full flex  items-center gap-[10px]' onClick={()=>{
+dispatch(setSelectedUser(user))
+navigate("/messageArea")
+  }}>
+
+{onlineUsers?.includes(user._id)? <OnlineUser user={user}/>: <div className='w-[50px] h-[50px] border-2 border-black rounded-full cursor-pointer overflow-hidden'>
+          <img src={user.profileImage || dp} alt="" className='w-full object-cover'/>
       </div>
+      }
+      <div className='flex flex-col'>
+<div className='text-white text-[18px] font-semibold'>{user.userName}</div>
+{onlineUsers?.includes(user?._id) && <div className='text-blue-500 text-[15px] '>Active Now</div>}
+</div>
+  </div>
+))}
+
+          </div>          
+
     </div>
-  );
+  )
 }
 
-export default Messages;
+export default Messages
+
 
 
