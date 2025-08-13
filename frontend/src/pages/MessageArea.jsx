@@ -1,117 +1,118 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { MdOutlineKeyboardBackspace } from "react-icons/md"
-import { LuImage } from "react-icons/lu"
-import { IoMdSend } from "react-icons/io"
-import dp from "../assets/dp.jpg"
-import SenderMessage from '../components/SenderMessage'
-import ReceiverMessage from '../components/ReceiverMessage'
-import axios from 'axios'
-import { serverUrl } from '../App'
-import { setMessages, setSelectedUser } from '../redux/messageSlice'
+import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { MdOutlineKeyboardBackspace } from "react-icons/md";
+import { LuImage } from "react-icons/lu";
+import { IoMdSend } from "react-icons/io";
+import dp from "../assets/dp.jpg";
+import SenderMessage from '../components/SenderMessage';
+import ReceiverMessage from '../components/ReceiverMessage';
+import axios from 'axios';
+import { serverUrl } from '../App';
+import { setMessages, setSelectedUser } from '../redux/messageSlice';
 
 function MessageArea() {
-  const { selectedUser, messages } = useSelector(state => state.message)
-  const { userData } = useSelector(state => state.user)
-  const { socket } = useSelector(state => state.socket)
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const [input, setInput] = useState("")
-  const imageInput = useRef()
-  const [frontendImage, setFrontendImage] = useState(null)
-  const [backendImage, setBackendImage] = useState(null)
+  const { selectedUser, messages } = useSelector(state => state.message);
+  const { userData } = useSelector(state => state.user);
+  const { socket } = useSelector(state => state.socket);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [input, setInput] = useState("");
+  const imageInput = useRef();
+  const [frontendImage, setFrontendImage] = useState(null);
+  const [backendImage, setBackendImage] = useState(null);
 
-  // Restore selected user from localStorage if missing
+  // Restore selected user from localStorage
   useEffect(() => {
     if (!selectedUser) {
-      const savedUser = localStorage.getItem("selectedUser")
+      const savedUser = localStorage.getItem("selectedUser");
       if (savedUser) {
-        dispatch(setSelectedUser(JSON.parse(savedUser)))
+        dispatch(setSelectedUser(JSON.parse(savedUser)));
       } else {
-        navigate("/messages")
+        navigate("/messages");
       }
     }
-  }, [selectedUser, dispatch, navigate])
+  }, [selectedUser, dispatch, navigate]);
 
   // Save selected user to localStorage
   useEffect(() => {
     if (selectedUser) {
-      localStorage.setItem("selectedUser", JSON.stringify(selectedUser))
+      localStorage.setItem("selectedUser", JSON.stringify(selectedUser));
     }
-  }, [selectedUser])
+  }, [selectedUser]);
 
   const handleImage = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      setBackendImage(file)
-      setFrontendImage(URL.createObjectURL(file))
+    const file = e.target.files[0];
+    if(file){
+      setBackendImage(file);
+      setFrontendImage(URL.createObjectURL(file));
     }
-  }
+  };
 
   const handleSendMessage = async (e) => {
-    e.preventDefault()
-    if (!input && !backendImage) return
+    e.preventDefault();
+    if (!input && !backendImage) return;
+
     try {
-      const formData = new FormData()
-      formData.append("message", input)
-      if (backendImage) formData.append("image", backendImage)
+      const formData = new FormData();
+      formData.append("message", input);
+      if (backendImage) formData.append("image", backendImage);
 
       const result = await axios.post(
         `${serverUrl}/api/message/send/${selectedUser._id}`,
         formData,
         { withCredentials: true }
-      )
+      );
 
-      const safeMsg = (result.data?.message || result.data?.image) ? result.data : null
-      if (safeMsg) {
-        dispatch(setMessages(Array.isArray(messages) ? [...messages, safeMsg] : [safeMsg]))
-      }
-
-      setInput("")
-      setBackendImage(null)
-      setFrontendImage(null)
+      dispatch(setMessages(Array.isArray(messages) ? [...messages, result.data] : [result.data]));
+      setInput("");
+      setBackendImage(null);
+      setFrontendImage(null);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   const getAllMessages = async () => {
     try {
       const result = await axios.get(
         `${serverUrl}/api/message/getAll/${selectedUser._id}`,
         { withCredentials: true }
-      )
-      dispatch(setMessages(Array.isArray(result.data) ? result.data : []))
+      );
+      dispatch(setMessages(Array.isArray(result.data) ? result.data : []));
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   useEffect(() => {
-    if (selectedUser) getAllMessages()
-  }, [selectedUser])
+    if (selectedUser) getAllMessages();
+  }, [selectedUser]);
 
+  // Socket listener for new messages
   useEffect(() => {
-    if (!socket) return
+    if (!socket) return;
+
     const handleNewMessage = (mess) => {
-      if (mess?.message || mess?.image) {
-        dispatch(setMessages(prev => Array.isArray(prev) ? [...prev, mess] : [mess]))
+      // Only update if message belongs to selectedUser chat
+      if (selectedUser && (mess.sender === selectedUser._id || mess.receiver === selectedUser._id)) {
+        dispatch(setMessages(prev => Array.isArray(prev) ? [...prev, mess] : [mess]));
       }
-    }
-    socket.on("newMessage", handleNewMessage)
-    return () => socket.off("newMessage", handleNewMessage)
-  }, [socket, dispatch])
+    };
+
+    socket.on("newMessage", handleNewMessage);
+    return () => socket.off("newMessage", handleNewMessage);
+  }, [socket, dispatch, selectedUser]);
 
   if (!selectedUser) {
     return (
       <div className='w-full h-[100vh] bg-black flex justify-center items-center text-white text-xl'>
         Loading...
       </div>
-    )
+    );
   }
 
-  const safeMessages = Array.isArray(messages) ? messages : []
+  const safeMessages = Array.isArray(messages) ? messages : [];
 
   return (
     <div className='w-full h-[100vh] bg-black relative'>
@@ -127,7 +128,12 @@ function MessageArea() {
           className='w-[40px] h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'
           onClick={() => navigate(`/profile/${selectedUser.userName}`)}
         >
-          <img src={selectedUser.profileImage || dp} alt="" className='w-full object-cover' />
+          <img
+            src={selectedUser.profileImage || dp}
+            alt=""
+            className='w-full object-cover'
+            onError={(e)=>{e.target.src=dp}}
+          />
         </div>
         <div className='text-white text-[18px] font-semibold'>
           <div>{selectedUser.userName}</div>
@@ -174,10 +180,10 @@ function MessageArea() {
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default MessageArea
+export default MessageArea;
 
 
 
