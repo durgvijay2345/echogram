@@ -53,44 +53,39 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  const { userData, notificationData } = useSelector((state) => state.user);
+  const {userData,notificationData}=useSelector(state=>state.user)
+   
+    const {socket}=useSelector(state=>state.socket)
+    const dispatch=useDispatch()
+ useEffect(()=>{
+  if(userData){
+    const socketIo=io(`${serverUrl}`,{
+      query:{
+        userId:userData._id
+      }
+    })
+dispatch(setSocket(socketIo))
 
-  // Initialize socket when userData is ready
-  useEffect(() => {
-    if (userData && !socketRef.current) {
-      const socketIo = io(serverUrl, { query: { userId: userData._id } });
-      socketRef.current = socketIo;
-      dispatch(setSocket(socketIo));
 
-      // Online users listener
-      socketIo.on("getOnlineUsers", (users) => {
-        dispatch(setOnlineUsers(users));
-        console.log("Online users:", users);
-      });
+socketIo.on('getOnlineUsers',(users)=>{
+  dispatch(setOnlineUsers(users))
+  console.log(users)
+})
 
-      // Notifications listener
-      const handleNotification = (noti) => {
-        dispatch(setNotificationData(prev => [...prev, noti]));
-      };
-      socketIo.on("newNotification", handleNotification);
 
-      return () => {
-        socketIo.off("newNotification", handleNotification);
-        socketIo.disconnect();
-        socketRef.current = null;
-        dispatch(setSocket(null));
-      };
+return ()=>socketIo.close()
+  }else{
+    if(socket){
+      socket.close()
+      dispatch(setSocket(null))
     }
+  }
+ },[userData])
 
-    // Disconnect socket if user logs out
-    if (!userData && socketRef.current) {
-      socketRef.current.disconnect();
-      socketRef.current = null;
-      dispatch(setSocket(null));
-    }
-  }, [userData, dispatch]);
 
-  // Loading spinner
+socket?.on("newNotification",(noti)=>{
+  dispatch(setNotificationData([...notificationData,noti]))
+})
   if (userLoading) {
     return (
       <div
