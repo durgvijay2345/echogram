@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
-import { setAllPosts } from '../redux/postSlice';
+import { setPostData } from '../redux/postSlice';
 import { serverUrl } from '../App';
 
 function useGetAllPost() {
@@ -13,7 +13,7 @@ function useGetAllPost() {
         if (userData) {
             axios.get(`${serverUrl}/api/post/getAll`)
                 .then(res => {
-                    dispatch(setAllPosts(res.data));
+                    dispatch(setPostData(res.data));
                 })
                 .catch(err => console.error(err));
         }
