@@ -44,8 +44,7 @@ function SignIn() {
       );
 
       const userData = result.data;
-      localStorage.setItem("token", userData.token);
-      localStorage.setItem("userData", JSON.stringify(userData));
+    
       dispatch(setUserData(userData));
 
       toast.success(userData.message || "Sign In Successful!");
