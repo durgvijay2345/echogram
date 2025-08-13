@@ -28,16 +28,12 @@ import Notifications from "./pages/Notifications";
 import Goodbye from "./pages/Goodbye";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-import ClipLoader from "react-spinners/ClipLoader";
+//import ClipLoader from "react-spinners/ClipLoader";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
-  const { userData, notificationData, loading } = useSelector((state) => state.user);
-  const { socket } = useSelector((state) => state.socket);
-  const dispatch = useDispatch();
-  const token = document.cookie;
-
+  
   // ✅ Always call hooks at top-level
   useGetCurrentUser();
   useGetSuggestedUsers();
@@ -48,50 +44,26 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-  // ✅ Socket setup
-  useEffect(() => {
-    if (userData) {
-      const socketIo = io(serverUrl, {
-        query: { userId: userData._id },
-        withCredentials: true, // important
-      });
-      dispatch(setSocket(socketIo));
+const {userData,notificationData}=useSelector(state=>state.user)
+   
+    const {socket}=useSelector(state=>state.socket)
+    const dispatch=useDispatch()
+ useEffect(()=>{
+  if(userData){
+    const socketIo=io(`${serverUrl}`,{
+      query:{
+        userId:userData._id
+      }
+    })
+dispatch(setSocket(socketIo))
 
-      socketIo.on("getOnlineUsers", (users) => {
-        dispatch(setOnlineUsers(users));
-      });
 
-      return () => {
-        socketIo.close();
-        dispatch(setSocket(null));
-      };
-    } else if (socket) {
-      socket.close();
-      dispatch(setSocket(null));
-    }
-  }, [userData, dispatch]);
+socketIo.on('getOnlineUsers',(users)=>{
+  dispatch(setOnlineUsers(users))
+  console.log(users)
+})
 
-  // ✅ Notifications listener
-  useEffect(() => {
-    if (socket) {
-      const handleNewNotification = (noti) => {
-        dispatch(setNotificationData([...notificationData, noti]));
-      };
-      socket.on("newNotification", handleNewNotification);
-      return () => {
-        socket.off("newNotification", handleNewNotification);
-      };
-    }
-  }, [socket, notificationData, dispatch]);
 
-  // Loader
-  if (token && loading) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center bg-black">
-        <ClipLoader color="#fff" size={50} />
-      </div>
-    );
-  }
 
   return (
     <Routes>
