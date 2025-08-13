@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ClipLoader } from "react-spinners";
 import { io } from "socket.io-client";
 
-// Redux actions (import your actual slice)
+
 import { setOnlineUsers, setNotificationData } from "./redux/userSlice";
 
 // Hooks
@@ -44,7 +44,7 @@ export let socket;
 
 function App() {
   const dispatch = useDispatch();
-  const socketRef = useRef(null); // ref to persist socket across renders
+  const socketRef = useRef(null); 
   const userLoading = useGetCurrentUser();
   useGetSuggestedUsers();
   useGetAllPost();
