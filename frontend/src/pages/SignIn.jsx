@@ -24,12 +24,8 @@ function SignIn() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (userName !== "") {
-      setInputClicked(prev => ({ ...prev, userName: true }));
-    }
-    if (password !== "") {
-      setInputClicked(prev => ({ ...prev, password: true }));
-    }
+    if (userName !== "") setInputClicked(prev => ({ ...prev, userName: true }));
+    if (password !== "") setInputClicked(prev => ({ ...prev, password: true }));
   }, [userName, password]);
 
   const handleSignIn = async () => {
@@ -44,7 +40,6 @@ function SignIn() {
       );
 
       const userData = result.data;
-    
       dispatch(setUserData(userData));
 
       toast.success(userData.message || "Sign In Successful!");
@@ -57,8 +52,8 @@ function SignIn() {
   };
 
   return (
-  <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 py-8">
-  <div className="w-full max-w-5xl h-auto bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800 px-4 py-8">
+      <div className="w-full max-w-5xl h-auto bg-white/10 backdrop-blur-md rounded-3xl border border-gray-700 shadow-[0_8px_30px_rgba(0,0,0,0.6)] flex flex-col lg:flex-row overflow-hidden transition-all duration-500">
 
         {/* Left Side Form */}
         <div className="w-full lg:w-1/2 flex flex-col justify-center items-center gap-6 p-6 sm:p-8">
@@ -71,38 +66,47 @@ function SignIn() {
           </div>
 
           {/* Username Input */}
-         <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/5 focus-within:ring-2 ring-pink-500">
-
+          <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
             <input
               type="text"
               id="username"
               name="username"
               autoComplete="username"
-              className="w-full h-full bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl text-white px-4 pt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              placeholder="Enter Username"
+              className="w-full h-full bg-transparent text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
               onFocus={() => setInputClicked(prev => ({ ...prev, userName: true }))}
               onChange={(e) => setUserName(e.target.value)}
               value={userName}
               required
             />
-            <label htmlFor="username" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white px-1 transition-all ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-transparent" : ""}`}>
+            <label
+              htmlFor="username"
+              className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
+                ${inputClicked.userName || userName ? "top-[-10px] text-xs bg-black/30" : ""}`}
+            >
               Enter Username
             </label>
           </div>
 
           {/* Password Input */}
-          <div className="relative w-[90%] h-[50px]">
+          <div className="relative w-[90%] h-[50px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
             <input
               type={showPassword ? "text" : "password"}
               id="password"
               name="password"
               autoComplete="current-password"
-              className="w-full h-full bg-white/10 backdrop-blur-md border border-white/30 rounded-2xl text-white px-4 pt-2 focus:outline-none focus:ring-2 focus:ring-pink-500"
+              placeholder="Enter Password"
+              className="w-full h-full bg-transparent text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
               onFocus={() => setInputClicked(prev => ({ ...prev, password: true }))}
               onChange={(e) => setPassword(e.target.value)}
               value={password}
               required
             />
-            <label htmlFor="password" className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white transition-all ${inputClicked.password || password ? "top-[-10px] text-xs bg-transparent" : ""}`}>
+            <label
+              htmlFor="password"
+              className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
+                ${inputClicked.password || password ? "top-[-10px] text-xs bg-black/30" : ""}`}
+            >
               Enter Password
             </label>
             {showPassword ? (
@@ -130,7 +134,7 @@ function SignIn() {
           <button
             onClick={handleSignIn}
             disabled={loading}
-            className="w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition duration-300 text-white font-bold"
+            className="w-[70%] h-[48px] rounded-2xl bg-gradient-to-r from-pink-600 to-red-600 hover:scale-105 transition duration-300 text-white font-bold flex justify-center items-center"
           >
             {loading ? <ClipLoader size={25} color="white" /> : "Sign In"}
           </button>
@@ -164,6 +168,7 @@ function SignIn() {
 }
 
 export default SignIn;
+
 
 
 
