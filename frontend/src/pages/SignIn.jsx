@@ -67,18 +67,19 @@ function SignIn() {
 
           {/* Username Input */}
           <div className="relative w-[90%] h-[52px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
-            <input
-              type="text"
-              id="username"
-              name="username"
-              autoComplete="username"
-              placeholder="Enter Username"
-              className="w-full h-full bg-transparent text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
-              onFocus={() => setInputClicked(prev => ({ ...prev, userName: true }))}
-              onChange={(e) => setUserName(e.target.value)}
-              value={userName}
-              required
-            />
+         <input
+  type="text"
+  id="username"
+  name="username"
+  autoComplete="username"
+  placeholder="Enter Username"
+  className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+  onFocus={() => setInputClicked(prev => ({ ...prev, userName: true }))}
+  onChange={(e) => setUserName(e.target.value)}
+  value={userName}
+  required
+/>
+
             <label
               htmlFor="username"
               className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
@@ -90,18 +91,19 @@ function SignIn() {
 
           {/* Password Input */}
           <div className="relative w-[90%] h-[50px] flex-shrink-0 rounded-2xl border border-white/30 bg-white/10 focus-within:ring-2 ring-pink-500">
-            <input
-              type={showPassword ? "text" : "password"}
-              id="password"
-              name="password"
-              autoComplete="current-password"
-              placeholder="Enter Password"
-              className="w-full h-full bg-transparent text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
-              onFocus={() => setInputClicked(prev => ({ ...prev, password: true }))}
-              onChange={(e) => setPassword(e.target.value)}
-              value={password}
-              required
-            />
+           <input
+  type={showPassword ? "text" : "password"}
+  id="password"
+  name="password"
+  autoComplete="current-password"
+  placeholder="Enter Password"
+  className="w-full h-full bg-gray-800/50 text-white px-4 pt-2 placeholder-transparent rounded-2xl focus:outline-none focus:ring-2 focus:ring-pink-500"
+  onFocus={() => setInputClicked(prev => ({ ...prev, password: true }))}
+  onChange={(e) => setPassword(e.target.value)}
+  value={password}
+  required
+/>
+
             <label
               htmlFor="password"
               className={`absolute left-4 top-1/2 -translate-y-1/2 text-sm text-white/70 px-1 transition-all
