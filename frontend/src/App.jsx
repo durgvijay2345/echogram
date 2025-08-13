@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { io } from "socket.io-client";
 import { setOnlineUsers, setSocket } from "./redux/socketSlice";
 import { setNotificationData } from "./redux/userSlice";
+
+// Hooks
 import useGetCurrentUser from "./hooks/useGetCurrentUser";
 import useGetAllPost from "./hooks/useGetAllPost";
 import useGetAllLoops from "./hooks/useGetAllLoops";
@@ -12,6 +14,8 @@ import useGetFollowingList from "./hooks/useGetFollowingList";
 import useGetPrevChatUsers from "./hooks/useGetPrevChatUsers";
 import useGetAllNotifications from "./hooks/useGetAllNotifications";
 import useGetSuggestedUsers from "./hooks/useGetSuggestedUsers";
+
+// Pages
 import SignUp from "./pages/SignUp";
 import SignIn from "./pages/SignIn";
 import ForgotPassword from "./pages/ForgotPassword";
@@ -26,14 +30,14 @@ import MessageArea from "./pages/MessageArea";
 import Search from "./pages/Search";
 import Notifications from "./pages/Notifications";
 import Goodbye from "./pages/Goodbye";
+
+// Routes
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-//import ClipLoader from "react-spinners/ClipLoader";
 
 export const serverUrl = "https://echogram-backend-wkov.onrender.com";
 
 function App() {
-  
   // ✅ Always call hooks at top-level
   useGetCurrentUser();
   useGetSuggestedUsers();
@@ -44,26 +48,49 @@ function App() {
   useGetPrevChatUsers();
   useGetAllNotifications();
 
-const {userData,notificationData}=useSelector(state=>state.user)
-   
-    const {socket}=useSelector(state=>state.socket)
-    const dispatch=useDispatch()
- useEffect(()=>{
-  if(userData){
-    const socketIo=io(`${serverUrl}`,{
-      query:{
-        userId:userData._id
-      }
-    })
-dispatch(setSocket(socketIo))
+  const { userData, notificationData } = useSelector((state) => state.user);
+  const { socket } = useSelector((state) => state.socket);
+  const dispatch = useDispatch();
 
+  // ✅ Socket setup
+  useEffect(() => {
+    if (userData) {
+      const socketIo = io(serverUrl, {
+        query: { userId: userData._id },
+        withCredentials: true, // important for cookies
+      });
 
-socketIo.on('getOnlineUsers',(users)=>{
-  dispatch(setOnlineUsers(users))
-  console.log(users)
-})
+      dispatch(setSocket(socketIo));
 
+      socketIo.on("getOnlineUsers", (users) => {
+        dispatch(setOnlineUsers(users));
+        console.log("Online Users:", users);
+      });
 
+      // Cleanup on unmount
+      return () => {
+        socketIo.close();
+        dispatch(setSocket(null));
+      };
+    } else if (socket) {
+      socket.close();
+      dispatch(setSocket(null));
+    }
+  }, [userData, dispatch]);
+
+  // ✅ Notification listener
+  useEffect(() => {
+    if (socket) {
+      const handleNewNotification = (noti) => {
+        dispatch(setNotificationData([...notificationData, noti]));
+      };
+
+      socket.on("newNotification", handleNewNotification);
+      return () => {
+        socket.off("newNotification", handleNewNotification);
+      };
+    }
+  }, [socket, notificationData, dispatch]);
 
   return (
     <Routes>
