@@ -16,7 +16,7 @@ dotenv.config();
 const port = process.env.PORT;
 
 app.use(cors({
-    origin:"https://echogram-vn2.vercel.app/",
+    origin:"https://echogram-vn2.vercel.app",
     credentials:true
 }))
 app.use(express.json());
