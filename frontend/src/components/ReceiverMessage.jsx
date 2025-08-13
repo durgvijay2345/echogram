@@ -10,36 +10,26 @@ function ReceiverMessage({ message }) {
         scroll.current?.scrollIntoView({ behavior: "smooth" });
     }, [message.message, message.image]);
 
+    const handleImgError = (e) => {
+        e.target.src = dp;
+    };
+
     return (
         <div
             ref={scroll}
             className='w-fit max-w-[60%] bg-[#1a1f1f] rounded-t-2xl rounded-br-2xl rounded-bl-0 px-[10px] py-[10px] relative left-0 flex flex-col gap-[10px]'
         >
-            {/* Image or PDF fallback */}
             {message.image && (
-                message.image.endsWith(".pdf") ? (
-                    <a
-                        href={message.image}
-                        target="_blank"
-                        rel="noreferrer"
-                        className='text-blue-500 underline'
-                    >
-                        Open PDF
-                    </a>
-                ) : (
-                    <img
-                        src={message.image}
-                        alt=""
-                        className='h-[200px] object-cover rounded-2xl'
-                        onError={(e) => { e.target.style.display = 'none'; }}
-                    />
-                )
+                <img
+                    src={message.image}
+                    alt=""
+                    className='h-[200px] object-cover rounded-2xl'
+                    onError={handleImgError}
+                />
             )}
 
             {message.message && (
-                <div className='text-[18px] text-white break-words'>
-                    {message.message}
-                </div>
+                <div className='text-[18px] text-white break-words'>{message.message}</div>
             )}
 
             <div className='w-[30px] h-[30px] rounded-full cursor-pointer overflow-hidden absolute left-[-25px] bottom-[-40px]'>
