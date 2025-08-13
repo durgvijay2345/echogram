@@ -52,24 +52,32 @@ function App() {
   const { userData } = useSelector((state) => state.user);
 
   // Initialize Socket.IO when userData is ready
-  useEffect(() => {
-    if (userData) {
-      socket = io(serverUrl, {
-        query: { userId: userData._id }, // backend uses handshake query
-        transports: ["websocket"],
+useEffect(() => {
+    if (userData && !socketRef.current) {
+      const socketIo = io(serverUrl, {
+        query: { userId: userData._id },
+      });
+      socketRef.current = socketIo;
+
+      socketIo.on('getOnlineUsers', (users) => {
+        dispatch(setOnlineUsers(users));
       });
 
-      // Listen for online users if needed
-      socket.on("getOnlineUsers", (users) => {
-        console.log("Online users:", users);
+      socketIo.on('newNotification', (noti) => {
+        dispatch(setNotificationData((prevNoti) => [...prevNoti, noti]));
       });
 
-      // Cleanup on unmount
       return () => {
-        if (socket) socket.disconnect();
+        socketIo.disconnect();
+        socketRef.current = null;
       };
     }
-  }, [userData]);
+
+    if (!userData && socketRef.current) {
+      socketRef.current.disconnect();
+      socketRef.current = null;
+    }
+  }, [userData, dispatch]);
 
   if (userLoading) {
     return (
