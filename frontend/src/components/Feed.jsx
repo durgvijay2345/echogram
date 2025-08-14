@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import StoryDp from './StoryDp';
 import Nav from './Nav';
 import Post from './Post';
@@ -7,12 +7,18 @@ import { useNavigate } from 'react-router-dom';
 import logo from "../assets/echo1.png";
 import { FaRegHeart } from "react-icons/fa6";
 import { BiMessageAltDetail } from "react-icons/bi";
+import { fetchStories } from '../redux/storySlice';
 
 function Feed() {
+  const dispatch = useDispatch();
   const { postData } = useSelector(state => state.post);
   const { userData, notificationData } = useSelector(state => state.user);
   const { storyList, currentUserStory } = useSelector(state => state.story);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    dispatch(fetchStories());
+  }, [dispatch]);
 
   return (
     <div className='lg:w-[50%] w-full bg-black min-h-[100vh] lg:h-[100vh] relative lg:overflow-y-auto'>
@@ -43,7 +49,6 @@ function Feed() {
             <Post post={post} key={index} />
           ))
         ) : (
-          
           <>
             {[1, 2, 3, 4].map((item) => (
               <div key={item} className='w-full max-w-[500px] h-[300px] bg-gray-300 rounded-xl animate-pulse'></div>
@@ -56,6 +61,7 @@ function Feed() {
 }
 
 export default Feed;
+
 
 
 
