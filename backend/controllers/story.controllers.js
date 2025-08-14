@@ -93,17 +93,25 @@ export const getStoryByUserName = async (req, res) => {
 
 export const getAllStories = async (req, res) => {
   try {
-    const currentUser = await User.findById(req.userId);
-    const followingIds = currentUser.following;
+
+    const currentUser = await User.findById(req.userId).select("following");
+
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+   
+    const followingIds = currentUser.following.map(id => id.toString());
 
     const stories = await Story.find({
-      author: { $in: [...followingIds, req.userId] },
+      author: { $in: [...followingIds, req.userId.toString()] },
     })
-      .populate("viewers author")
+      .populate("author", "name userName profileImage")
+      .populate("viewers", "name userName profileImage")
       .sort({ createdAt: -1 });
 
     return res.status(200).json(stories);
   } catch (error) {
-    return res.status(500).json({ message: "All story get error" });
+    return res.status(500).json({ message: `All story get error: ${error.message}` });
   }
 };
