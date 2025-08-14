@@ -36,12 +36,13 @@ function Story() {
     return (
         <div className='w-full h-[100vh] bg-black flex justify-center items-center'>
             {storyArrayData.length > 0 && (
-                <StoryCard
-                    storyData={storyArrayData[currentIndex]}
-                    currentIndex={currentIndex}
-                    setCurrentIndex={setCurrentIndex}
-                    total={storyArrayData.length}
-                />
+               <StoryCard
+    key={storyArrayData[currentIndex]?._id} 
+    storyData={storyArrayData[currentIndex]}
+    currentIndex={currentIndex}
+    setCurrentIndex={setCurrentIndex}
+    total={storyArrayData.length}
+/>
             )}
         </div>
     );
