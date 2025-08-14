@@ -25,37 +25,72 @@ function Post({ post }) {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const handleLike = async () => {
-    try {
-      const result = await axios.get(`${serverUrl}/api/post/like/${post._id}`, { withCredentials: true });
-      const updatedPost = result.data;
-      const updatedPosts = postData.map(p => p._id === post._id ? updatedPost : p);
-      dispatch(setPostData(updatedPosts));
-    } catch (error) {
-      console.log(error);
-    }
+ const handleLike = async () => {
+  // Optimistic UI update
+  const alreadyLiked = post.likes.includes(userData._id);
+  const updatedLikes = alreadyLiked
+    ? post.likes.filter(id => id !== userData._id)
+    : [...post.likes, userData._id];
+
+  const updatedPosts = postData.map(p =>
+    p._id === post._id ? { ...p, likes: updatedLikes } : p
+  );
+  dispatch(setPostData(updatedPosts));
+
+  try {
+    await axios.get(`${serverUrl}/api/post/like/${post._id}`, { withCredentials: true });
+  } catch (error) {
+    console.log(error);
+  
+    dispatch(setPostData(postData));
+  }
+};
+
+const handleComment = async () => {
+  if (!message.trim()) return;
+
+  
+  const newComment = {
+    author: { _id: userData._id, userName: userData.userName, profileImage: userData.profileImage },
+    message,
   };
 
-  const handleComment = async () => {
-    try {
-      const result = await axios.post(`${serverUrl}/api/post/comment/${post._id}`, { message }, { withCredentials: true });
-      const updatedPost = result.data;
-      const updatedPosts = postData.map(p => p._id === post._id ? updatedPost : p);
-      dispatch(setPostData(updatedPosts));
-      setMessage("");
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
+  const updatedPosts = postData.map(p =>
+    p._id === post._id ? { ...p, comments: [...p.comments, newComment] } : p
+  );
+  dispatch(setPostData(updatedPosts));
+  setMessage("");
 
-  const handleSaved = async () => {
-    try {
-      const result = await axios.get(`${serverUrl}/api/post/saved/${post._id}`, { withCredentials: true });
-      dispatch(setUserData(result.data));
-    } catch (error) {
-      console.log(error.response);
-    }
-  };
+  try {
+    const result = await axios.post(`${serverUrl}/api/post/comment/${post._id}`, { message }, { withCredentials: true });
+    const updatedPost = result.data;
+    const finalPosts = postData.map(p => p._id === post._id ? updatedPost : p);
+    dispatch(setPostData(finalPosts));
+  } catch (error) {
+    console.log(error.response);
+   
+    dispatch(setPostData(postData));
+  }
+};
+
+const handleSaved = async () => {
+  
+  const alreadySaved = userData.saved.includes(post._id);
+  const updatedSaved = alreadySaved
+    ? userData.saved.filter(id => id !== post._id)
+    : [...userData.saved, post._id];
+
+  dispatch(setUserData({ ...userData, saved: updatedSaved }));
+
+  try {
+    const result = await axios.get(`${serverUrl}/api/post/saved/${post._id}`, { withCredentials: true });
+    dispatch(setUserData(result.data));
+  } catch (error) {
+    console.log(error.response);
+    
+    dispatch(setUserData(userData));
+  }
+};
 
   useEffect(() => {
     socket?.on("likedPost", (updatedData) => {
