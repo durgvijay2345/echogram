@@ -9,9 +9,21 @@ import { FaEye } from "react-icons/fa6";
 function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
     const { userData } = useSelector(state => state.user);
     const [showViewers, setShowViewers] = useState(false);
-    const navigate = useNavigate();
     const [progress, setProgress] = useState(0);
+    const [activeStory, setActiveStory] = useState(null);
+    const navigate = useNavigate();
 
+    // Load new story with cleanup
+    useEffect(() => {
+        setActiveStory(null); 
+        const timeout = setTimeout(() => {
+            setActiveStory(storyData);
+        }, 50);
+
+        return () => clearTimeout(timeout);
+    }, [storyData]);
+
+   
     useEffect(() => {
         setProgress(0);
         const interval = setInterval(() => {
@@ -30,84 +42,130 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
         }, 100);
 
         return () => clearInterval(interval);
-    }, [currentIndex, setCurrentIndex, total, navigate]);
+    }, [currentIndex, total, setCurrentIndex, navigate]);
 
-    if (!storyData) return null;
+    if (!activeStory) return null;
 
     return (
         <div className='w-full max-w-[500px] h-[100vh] border-x-2 border-gray-800 pt-[10px] relative flex flex-col justify-center'>
-            <div className='flex items-center gap-[10px] absolute top-[30px] px-[10px]'>
-                <MdOutlineKeyboardBackspace className='text-white cursor-pointer w-[25px]  h-[25px]' onClick={() => navigate(`/`)} />
-                <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'>
-                    <img src={storyData?.author?.profileImage || dp} alt="" className='w-full object-cover' />
+            {/* Header */}
+            <div className='flex items-center gap-[10px] absolute top-[30px] px-[10px] z-10'>
+                <MdOutlineKeyboardBackspace
+                    className='text-white cursor-pointer w-[25px]  h-[25px]'
+                    onClick={() => navigate(`/`)}
+                />
+                <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full overflow-hidden'>
+                    <img
+                        src={activeStory?.author?.profileImage || dp}
+                        alt=""
+                        className='w-full h-full object-cover'
+                        onError={e => e.target.src = dp}
+                    />
                 </div>
-                <div className='w-[120px] font-semibold truncate text-white'>{storyData?.author?.userName}</div>
+                <div className='w-[120px] font-semibold truncate text-white'>
+                    {activeStory?.author?.userName}
+                </div>
             </div>
 
-            <div className='absolute top-[10px]  w-full h-[5px] bg-gray-900'>
-                <div className='h-full bg-white transition-all duration-200 ease-linear' style={{ width: `${progress}%` }}></div>
+            {/* Progress Bar */}
+            <div className='absolute top-[10px] w-full h-[5px] bg-gray-900 z-10'>
+                <div
+                    className='h-full bg-white transition-all duration-100 ease-linear'
+                    style={{ width: `${progress}%` }}
+                ></div>
             </div>
 
+            {/* Story Media */}
             {!showViewers && (
-                <>
-                    <div className='w-full h-[90vh] flex items-center justify-center'>
-                        {storyData?.mediaType === "image" && (
-                            <div className='w-[90%] flex items-center justify-center'>
-                                <img src={storyData?.media} alt="" className='w-[80%] rounded-2xl object-cover' />
-                            </div>
-                        )}
-
-                        {storyData?.mediaType === "video" && (
-                            <div className='w-[80%] flex flex-col items-center justify-center'>
-                                <VideoPlayer media={storyData?.media} />
-                            </div>
-                        )}
-                    </div>
-
-                    {storyData?.author?.userName === userData?.userName && (
-                        <div className='absolute w-full flex items-center gap-[10px] text-white h-[70px] bottom-0 p-2 left-0 cursor-pointer' onClick={() => setShowViewers(true)}>
-                            <div className='text-white flex items-center gap-[5px]'>
-                                <FaEye />{storyData.viewers.length}
-                            </div>
-                            <div className='flex relative'>
-                                {storyData?.viewers?.slice(0, 3).map((viewer, index) => (
-                                    <div key={index} className={`w-[30px] h-[30px] border-2 border-black rounded-full cursor-pointer overflow-hidden ${index > 0 ? `absolute left-[${index * 10}px]` : ""}`}>
-                                        <img src={viewer?.profileImage || dp} alt="" className='w-full object-cover' />
-                                    </div>
-                                ))}
-                            </div>
+                <div className='w-full h-[90vh] flex items-center justify-center'>
+                    {activeStory?.mediaType === "image" && (
+                        <div className='w-[90%] flex items-center justify-center'>
+                            <img
+                                key={activeStory.media}
+                                src={activeStory.media}
+                                alt=""
+                                className='w-[80%] rounded-2xl object-cover'
+                            />
                         </div>
                     )}
-                </>
+                    {activeStory?.mediaType === "video" && (
+                        <div className='w-[80%] flex flex-col items-center justify-center'>
+                            <VideoPlayer key={activeStory.media} media={activeStory.media} />
+                        </div>
+                    )}
+                </div>
             )}
 
+            {/* Viewers (only for own story) */}
+            {!showViewers && activeStory?.author?.userName === userData?.userName && (
+                <div
+                    className='absolute w-full flex items-center gap-[10px] text-white h-[70px] bottom-0 p-2 left-0 cursor-pointer'
+                    onClick={() => setShowViewers(true)}
+                >
+                    <div className='flex items-center gap-[5px]'>
+                        <FaEye />{activeStory.viewers.length}
+                    </div>
+                    <div className='flex relative'>
+                        {activeStory?.viewers?.slice(0, 3).map((viewer, index) => (
+                            <div
+                                key={index}
+                                className={`w-[30px] h-[30px] border-2 border-black rounded-full overflow-hidden absolute`}
+                                style={{ left: `${index * 20}px` }}
+                            >
+                                <img
+                                    src={viewer?.profileImage || dp}
+                                    alt=""
+                                    className='w-full h-full object-cover'
+                                    onError={e => e.target.src = dp}
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {/* Viewers List */}
             {showViewers && (
                 <>
-                    <div className='w-full h-[30%] flex items-center justify-center mt-[100px] cursor-pointer py-[30px] overflow-hidden' onClick={() => setShowViewers(false)}>
-                        {storyData?.mediaType === "image" && (
+                    <div
+                        className='w-full h-[30%] flex items-center justify-center mt-[100px] cursor-pointer py-[30px] overflow-hidden'
+                        onClick={() => setShowViewers(false)}
+                    >
+                        {activeStory?.mediaType === "image" && (
                             <div className='h-full flex items-center justify-center'>
-                                <img src={storyData?.media} alt="" className='h-full rounded-2xl object-cover' />
+                                <img
+                                    key={activeStory.media}
+                                    src={activeStory.media}
+                                    alt=""
+                                    className='h-full rounded-2xl object-cover'
+                                />
                             </div>
                         )}
-
-                        {storyData?.mediaType === "video" && (
+                        {activeStory?.mediaType === "video" && (
                             <div className='h-full flex flex-col items-center justify-center'>
-                                <VideoPlayer media={storyData?.media} />
+                                <VideoPlayer key={activeStory.media} media={activeStory.media} />
                             </div>
                         )}
                     </div>
 
-                    <div className='w-full h-[70%] border-t-2 border-t-gray-800 p-[20px]'>
+                    <div className='w-full h-[70%] border-t-2 border-t-gray-800 p-[20px] overflow-y-auto'>
                         <div className='text-white flex items-center gap-[10px]'>
-                            <FaEye /><span>{storyData?.viewers?.length}</span><span>Viewers</span>
+                            <FaEye /><span>{activeStory?.viewers?.length}</span><span>Viewers</span>
                         </div>
-                        <div className='w-full max-h-full flex flex-col gap-[10px] overflow-auto pt-[20px]'>
-                            {storyData?.viewers?.map((viewer, index) => (
-                                <div key={index} className='w-full flex items-center gap-[20px]'>
-                                    <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full cursor-pointer overflow-hidden'>
-                                        <img src={viewer?.profileImage || dp} alt="" className='w-full object-cover' />
+                        <div className='flex flex-col gap-[10px] pt-[20px]'>
+                            {activeStory?.viewers?.map((viewer, index) => (
+                                <div key={index} className='flex items-center gap-[20px]'>
+                                    <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full overflow-hidden'>
+                                        <img
+                                            src={viewer?.profileImage || dp}
+                                            alt=""
+                                            className='w-full h-full object-cover'
+                                            onError={e => e.target.src = dp}
+                                        />
                                     </div>
-                                    <div className='w-[120px] font-semibold truncate text-white'>{viewer?.userName}</div>
+                                    <div className='w-[120px] font-semibold truncate text-white'>
+                                        {viewer?.userName}
+                                    </div>
                                 </div>
                             ))}
                         </div>
