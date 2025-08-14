@@ -52,7 +52,6 @@ function StoryDp({ ProfileImage, userName, story }) {
                     <img src={ProfileImage || dp} alt="" className='w-full h-full object-cover object-center cursor-pointer' />
                 </div>
 
-                
                 {!story && userName === "Your Story" && (
                     <FiPlusCircle className='absolute bottom-0 right-0 w-[22px] h-[22px] text-white bg-black rounded-full p-[2px]' />
                 )}
