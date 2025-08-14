@@ -54,28 +54,54 @@ function LoopCard({ loop }) {
         }
     }
 
-    const handleLike = async () => {
-        try {
-            const result = await axios.get(`${serverUrl}/api/loop/like/${loop._id}`, { withCredentials: true })
-            const updatedLoop = result.data
-            const updatedLoops = loopData.map(p => p._id === loop._id ? updatedLoop : p)
-            dispatch(setLoopData(updatedLoops))
-        } catch (error) {
-            console.log(error)
-        }
-    }
+  const handleLike = async () => {
+    // Optimistic update
+    const updatedLikes = loop.likes.includes(userData._id)
+        ? loop.likes.filter(id => id !== userData._id) // unlike
+        : [...loop.likes, userData._id] // like
 
-    const handleComment = async () => {
-        try {
-            const result = await axios.post(`${serverUrl}/api/loop/comment/${loop._id}`, { message }, { withCredentials: true })
-            const updatedLoop = result.data
-            const updatedLoops = loopData.map(p => p._id === loop._id ? updatedLoop : p)
-            dispatch(setLoopData(updatedLoops))
-            setMessage("")
-        } catch (error) {
-            console.log(error)
-        }
+    const updatedLoops = loopData.map(p =>
+        p._id === loop._id ? { ...p, likes: updatedLikes } : p
+    )
+    dispatch(setLoopData(updatedLoops))
+
+    try {
+        await axios.get(`${serverUrl}/api/loop/like/${loop._id}`, { withCredentials: true })
+    } catch (error) {
+        console.log(error)
+        // revert on error
+        const revertedLoops = loopData.map(p => p._id === loop._id ? loop : p)
+        dispatch(setLoopData(revertedLoops))
     }
+}
+
+const handleComment = async () => {
+    if (!message.trim()) return
+
+    // Optimistic update
+    const tempComment = {
+        author: {
+            _id: userData._id,
+            userName: userData.userName,
+            profileImage: userData.profileImage
+        },
+        message
+    }
+    const updatedLoops = loopData.map(p =>
+        p._id === loop._id ? { ...p, comments: [...p.comments, tempComment] } : p
+    )
+    dispatch(setLoopData(updatedLoops))
+    setMessage("")
+
+    try {
+        await axios.post(`${serverUrl}/api/loop/comment/${loop._id}`, { message }, { withCredentials: true })
+    } catch (error) {
+        console.log(error)
+        // revert on error
+        const revertedLoops = loopData.map(p => p._id === loop._id ? loop : p)
+        dispatch(setLoopData(revertedLoops))
+    }
+}
 
     const goToProfile = (userName) => {
         navigate(`/profile/${userName}`);
