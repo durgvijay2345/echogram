@@ -68,7 +68,7 @@ import Post from './Post';
 import { useNavigate } from 'react-router-dom';
 function Feed() {
   const {postData}=useSelector(state=>state.post)
-    const {userData,notificationData}=useSelector(state=>state.user)
+    const {userData,notificationData,following}=useSelector(state=>state.user)
      const {storyList,currentUserStory}=useSelector(state=>state.story)
      const navigate=useNavigate()
   return (
@@ -89,7 +89,7 @@ function Feed() {
 
 <StoryDp userName={"Your Story"} ProfileImage={userData.profileImage} story={currentUserStory}/>
 
-{storyList?.map((story,index)=>(
+{following?.map((story,index)=>(
   
 <StoryDp userName={story.author.userName} ProfileImage={story.author.profileImage} story={story} key={index}/>
 ))}
