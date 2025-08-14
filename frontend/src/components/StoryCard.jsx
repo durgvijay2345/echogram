@@ -10,20 +10,9 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
     const { userData } = useSelector(state => state.user);
     const [showViewers, setShowViewers] = useState(false);
     const [progress, setProgress] = useState(0);
-    const [activeStory, setActiveStory] = useState(null);
     const navigate = useNavigate();
 
-    // Load new story with cleanup
-    useEffect(() => {
-        setActiveStory(null); 
-        const timeout = setTimeout(() => {
-            setActiveStory(storyData);
-        }, 50);
-
-        return () => clearTimeout(timeout);
-    }, [storyData]);
-
-   
+    // Progress timer
     useEffect(() => {
         setProgress(0);
         const interval = setInterval(() => {
@@ -44,10 +33,13 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
         return () => clearInterval(interval);
     }, [currentIndex, total, setCurrentIndex, navigate]);
 
-    if (!activeStory) return null;
+    if (!storyData) return null;
 
     return (
-        <div className='w-full max-w-[500px] h-[100vh] border-x-2 border-gray-800 pt-[10px] relative flex flex-col justify-center'>
+        <div 
+            key={storyData._id} 
+            className='w-full max-w-[500px] h-[100vh] border-x-2 border-gray-800 pt-[10px] relative flex flex-col justify-center'
+        >
             {/* Header */}
             <div className='flex items-center gap-[10px] absolute top-[30px] px-[10px] z-10'>
                 <MdOutlineKeyboardBackspace
@@ -56,14 +48,14 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
                 />
                 <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full overflow-hidden'>
                     <img
-                        src={activeStory?.author?.profileImage || dp}
+                        src={storyData?.author?.profileImage || dp}
                         alt=""
                         className='w-full h-full object-cover'
                         onError={e => e.target.src = dp}
                     />
                 </div>
                 <div className='w-[120px] font-semibold truncate text-white'>
-                    {activeStory?.author?.userName}
+                    {storyData?.author?.userName}
                 </div>
             </div>
 
@@ -78,35 +70,34 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
             {/* Story Media */}
             {!showViewers && (
                 <div className='w-full h-[90vh] flex items-center justify-center'>
-                    {activeStory?.mediaType === "image" && (
+                    {storyData?.mediaType === "image" && (
                         <div className='w-[90%] flex items-center justify-center'>
                             <img
-                                key={activeStory.media}
-                                src={activeStory.media}
+                                src={storyData.media}
                                 alt=""
                                 className='w-[80%] rounded-2xl object-cover'
                             />
                         </div>
                     )}
-                    {activeStory?.mediaType === "video" && (
+                    {storyData?.mediaType === "video" && (
                         <div className='w-[80%] flex flex-col items-center justify-center'>
-                            <VideoPlayer key={activeStory.media} media={activeStory.media} />
+                            <VideoPlayer media={storyData.media} />
                         </div>
                     )}
                 </div>
             )}
 
             {/* Viewers (only for own story) */}
-            {!showViewers && activeStory?.author?.userName === userData?.userName && (
+            {!showViewers && storyData?.author?.userName === userData?.userName && (
                 <div
                     className='absolute w-full flex items-center gap-[10px] text-white h-[70px] bottom-0 p-2 left-0 cursor-pointer'
                     onClick={() => setShowViewers(true)}
                 >
                     <div className='flex items-center gap-[5px]'>
-                        <FaEye />{activeStory.viewers.length}
+                        <FaEye />{storyData.viewers.length}
                     </div>
                     <div className='flex relative'>
-                        {activeStory?.viewers?.slice(0, 3).map((viewer, index) => (
+                        {storyData?.viewers?.slice(0, 3).map((viewer, index) => (
                             <div
                                 key={index}
                                 className={`w-[30px] h-[30px] border-2 border-black rounded-full overflow-hidden absolute`}
@@ -131,29 +122,28 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
                         className='w-full h-[30%] flex items-center justify-center mt-[100px] cursor-pointer py-[30px] overflow-hidden'
                         onClick={() => setShowViewers(false)}
                     >
-                        {activeStory?.mediaType === "image" && (
+                        {storyData?.mediaType === "image" && (
                             <div className='h-full flex items-center justify-center'>
                                 <img
-                                    key={activeStory.media}
-                                    src={activeStory.media}
+                                    src={storyData.media}
                                     alt=""
                                     className='h-full rounded-2xl object-cover'
                                 />
                             </div>
                         )}
-                        {activeStory?.mediaType === "video" && (
+                        {storyData?.mediaType === "video" && (
                             <div className='h-full flex flex-col items-center justify-center'>
-                                <VideoPlayer key={activeStory.media} media={activeStory.media} />
+                                <VideoPlayer media={storyData.media} />
                             </div>
                         )}
                     </div>
 
                     <div className='w-full h-[70%] border-t-2 border-t-gray-800 p-[20px] overflow-y-auto'>
                         <div className='text-white flex items-center gap-[10px]'>
-                            <FaEye /><span>{activeStory?.viewers?.length}</span><span>Viewers</span>
+                            <FaEye /><span>{storyData?.viewers?.length}</span><span>Viewers</span>
                         </div>
                         <div className='flex flex-col gap-[10px] pt-[20px]'>
-                            {activeStory?.viewers?.map((viewer, index) => (
+                            {storyData?.viewers?.map((viewer, index) => (
                                 <div key={index} className='flex items-center gap-[20px]'>
                                     <div className='w-[30px] h-[30px] md:w-[40px] md:h-[40px] border-2 border-black rounded-full overflow-hidden'>
                                         <img
@@ -177,6 +167,7 @@ function StoryCard({ storyData, currentIndex, setCurrentIndex, total }) {
 }
 
 export default StoryCard;
+
 
 
 
